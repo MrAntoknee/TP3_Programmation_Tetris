@@ -10,9 +10,15 @@ namespace TP3
     {
       InitializeComponent( );
     }
+    //NEED COMMENTS
+    const int nbColonnesJeu = 20;
+    const int nbLignesJeu = 10;
+    enum TypeBloc { None, Gelé, Carré, Ligne, T, L, J, S, Z }
+    TypeBloc[,] etatBlocs = new TypeBloc[nbLignesJeu, nbColonnesJeu];
 
-    #region Code fourni
     
+    #region Code fourni
+
     // Représentation visuelles du jeu en mémoire.
     PictureBox[,] toutesImagesVisuelles = null;
     
@@ -26,7 +32,7 @@ namespace TP3
     {
       // Ne pas oublier de mettre en place les valeurs nécessaires à une partie.
       ExecuterTestsUnitaires();
-      InitialiserSurfaceDeJeu(20,10);
+      InitialiserSurfaceDeJeu(nbColonnesJeu, nbLignesJeu);
     }
 
     private void InitialiserSurfaceDeJeu(int nbLignes, int nbCols)
@@ -89,10 +95,24 @@ namespace TP3
 
 
     #endregion
-
+    /// <summary>
+    /// Permet la sortie de l'application à tout moment.
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
     private void exitToolStripMenuItem_Click(object sender, EventArgs e)
     {
       Application.Exit();
+    }
+    private void RemplirTableauEtat()
+    {
+      for (int compteur = 0; compteur < nbLignesJeu; compteur++)
+      {
+        for (int compteur2 = 0; compteur2 < nbLignesJeu; compteur2++)
+        {
+          etatBlocs[compteur, compteur2] = TypeBloc.None;
+        }
+      }
     }
   }
 
