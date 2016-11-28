@@ -87,9 +87,10 @@ namespace TP3
       // Clean-up
     }
 
+
     #endregion
 
-    private void optionsToolStripMenuItem_Click(object sender, EventArgs e)
+    private void exitToolStripMenuItem_Click(object sender, EventArgs e)
     {
       Application.Exit();
     }
