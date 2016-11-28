@@ -16,7 +16,15 @@ namespace TP3
     enum TypeBloc { None, Gelé, Carré, Ligne, T, L, J, S, Z }
     TypeBloc[,] etatBlocs = new TypeBloc[nbLignesJeu, nbColonnesJeu];
 
+<<<<<<< HEAD
     
+=======
+    const int nbLignesJeu = 20;
+    const int nbColonnesJeu = 10;
+    enum Deplacement { DESCENTE, DROITE, GAUCHE, ROTATION_HORAIRE, ROTATION_ANTIHORAIRE }
+    enum TypeBloc { None, Gele, Carre, Ligne, T, L, J, S, Z }
+
+>>>>>>> origin/master
     #region Code fourni
 
     // Représentation visuelles du jeu en mémoire.
@@ -32,7 +40,11 @@ namespace TP3
     {
       // Ne pas oublier de mettre en place les valeurs nécessaires à une partie.
       ExecuterTestsUnitaires();
+<<<<<<< HEAD
       InitialiserSurfaceDeJeu(nbColonnesJeu, nbLignesJeu);
+=======
+      InitialiserSurfaceDeJeu(nbLignesJeu, nbColonnesJeu);
+>>>>>>> origin/master
     }
 
     private void InitialiserSurfaceDeJeu(int nbLignes, int nbCols)
@@ -68,9 +80,6 @@ namespace TP3
     #endregion
 
 
-
-
-
     #region Code à développer
     /// <summary>
     /// Faites ici les appels requis pour vos tests unitaires.
@@ -95,11 +104,114 @@ namespace TP3
 
 
     #endregion
+<<<<<<< HEAD
     /// <summary>
     /// Permet la sortie de l'application à tout moment.
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
+=======
+
+    Deplacement SaisirCoupJoueur()
+    {
+      Deplacement sens;
+      ConsoleKeyInfo info = Console.ReadKey();
+      if (info.Key == ConsoleKey.LeftArrow)
+      {
+        sens = Deplacement.GAUCHE;
+        return sens;
+      }
+      else if (info.Key == ConsoleKey.RightArrow)
+      {
+        sens = Deplacement.DROITE;
+        return sens;
+      }
+      else if (info.Key == ConsoleKey.UpArrow)
+      {
+        sens = Deplacement.ROTATION_HORAIRE;
+        return sens;
+      }
+      else if (info.Key == ConsoleKey.DownArrow)
+      {
+        sens = Deplacement.ROTATION_ANTIHORAIRE;
+        return sens;
+      }
+      else if (info.Key == ConsoleKey.Spacebar)
+      {
+        sens = Deplacement.DESCENTE;
+        return sens;
+      }
+      else
+      {
+        sens = Deplacement.DESCENTE;
+        return sens;
+      }
+    }
+
+    bool BlocPeutBouger(Deplacement sens)
+    {
+      bool peutBouger = true;
+      if (sens == DESCENTE)
+      {
+        for (int i = 0; i < blocActifX.Length; i++)
+        {
+          for (int j = 0; j < blocActifY.Length; j++)
+          {
+            if ((blocActifX[i] && (blocActifY[j] + 1)) == TypeBloc.Gele || (blocActifY[j] + 1) >= nbLignesJeu)
+            {
+              peutBouger = false;
+            }
+          }
+        }
+      }
+      else if (sens == GAUCHE)
+      {
+        for (int i = 0; i < blocActifX.Length; i++)
+        {
+          if (blocActifX[i] - 1 < 0 || blocActifX[i] - 1 == TypeBloc.Gele)
+          {
+            peutBouger = false;
+          }
+        }
+      }
+      else if (sens == DROITE)
+      {
+        for(int i = 0; i < blocActifX.Length; i++)
+        {
+          if (blocActifX[i] + 1 >= nbColonnesJeu || blocActifX[i] + 1 == TypeBloc.Gele)
+          {
+            peutBouger = false;
+          }
+        }
+      }
+      else if(sens == ROTATION_ANTIHORAIRE)
+      {
+        for (int i = 0; i < blocAcifY.Length; i++)
+        {
+          blocActifNouveauY[i] = -blocActifX[i];
+          blocActifNouveauX[i] = blocActifY[i];
+          if (blocActifNouveauY[i] == TypeBloc.Gele || blocActifNouveauX[i] == TypeBloc.Gele || blocActifNouveauY[i] + 1 >= nbColonnesJeu)
+          {
+            peutBouger = false;
+          }
+        }
+      }
+      else
+      {
+        for (int i = 0; i < blocAcifY.Length; i++)
+        {
+          blocActifNouveauY[i] = blocActifX[i];
+          blocActifNouveauX[i] = -blocActifY[i];
+          if (blocActifNouveauY[i] == TypeBloc.Gele || blocActifNouveauX[i] == TypeBloc.Gele || (blocActifNouveauY[i] + 1 < 0)
+          {
+            peutBouger = false;
+          }
+        }
+      }
+      return peutBouger;
+    }
+
+>>>>>>> origin/master
     private void exitToolStripMenuItem_Click(object sender, EventArgs e)
     {
       Application.Exit();
