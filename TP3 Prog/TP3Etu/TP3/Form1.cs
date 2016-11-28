@@ -14,7 +14,7 @@ namespace TP3
       InitializeComponent( );
     }
     //NEED COMMENTS
-    int timerI = 0;
+    int timerAction = 0;
     const int nbColonnesJeu = 10;
     const int nbLignesJeu = 20;
     int[,] etatBlocs = new int[nbLignesJeu, nbColonnesJeu];
@@ -138,7 +138,7 @@ namespace TP3
       }
     }
 
-  /* bool BlocPeutBouger(Deplacement sens)
+  /*bool BlocPeutBouger(Deplacement sens)
     {
       bool peutBouger = true;
       if (sens == DESCENTE)
@@ -221,7 +221,7 @@ namespace TP3
     }
     void refaireCouleurs()
     {
-      etatBlocs[8, 8] = (int)TypeBloc.Gelé;//**********************************************
+      etatBlocs[8, 5] = (int)TypeBloc.Gelé;//**********************************************
       for (int compteur = 0; compteur < 4; compteur++)
       {
         etatBlocs[blocActifX[compteur], blocActifY[compteur]] = (int)TypeBloc.Carré;
@@ -245,8 +245,34 @@ namespace TP3
       {
         blocActifX[compteur]++;
       }
-      timerI++;
+      timerAction++;
     }
+
+    private void restartToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+      refaireJeu();
+    }
+    /// <summary>
+    /// Fonction qui recommence le jeu à zéro.
+    /// </summary>
+    //<alangevin>
+    void refaireJeu()
+    {
+      timerDescente.Stop();
+      blocActifX = new int[4] { 0, 1, 0, 1 };
+      blocActifY = new int[4] { 5, 4, 4, 5 };
+      timerAction = 0;
+      for (int compteur = 0; compteur < nbLignesJeu; compteur++)
+      {
+        for (int compteur2 = 0; compteur2 < nbColonnesJeu; compteur2++)
+        {
+          etatBlocs[compteur, compteur2] = (int)TypeBloc.None;
+          toutesImagesVisuelles[compteur, compteur2].BackColor = toutesLesCouleurs[etatBlocs[compteur, compteur2]];
+        }
+      }
+      timerDescente.Start();
+    }
+    //</alangevin>
   }
 
 

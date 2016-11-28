@@ -34,6 +34,7 @@
       this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.timerDescente = new System.Windows.Forms.Timer(this.components);
+      this.restartToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.menuStrip1.SuspendLayout();
       this.SuspendLayout();
       // 
@@ -59,7 +60,7 @@
       this.tableauJeu.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 27F));
       this.tableauJeu.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 27F));
       this.tableauJeu.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 27F));
-      this.tableauJeu.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 52F));
+      this.tableauJeu.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 53F));
       this.tableauJeu.Location = new System.Drawing.Point(231, 52);
       this.tableauJeu.Margin = new System.Windows.Forms.Padding(0);
       this.tableauJeu.Name = "tableauJeu";
@@ -112,7 +113,8 @@
       // optionsToolStripMenuItem
       // 
       this.optionsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.exitToolStripMenuItem});
+            this.exitToolStripMenuItem,
+            this.restartToolStripMenuItem});
       this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
       this.optionsToolStripMenuItem.Size = new System.Drawing.Size(73, 24);
       this.optionsToolStripMenuItem.Text = "Options";
@@ -120,7 +122,7 @@
       // exitToolStripMenuItem
       // 
       this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-      this.exitToolStripMenuItem.Size = new System.Drawing.Size(108, 26);
+      this.exitToolStripMenuItem.Size = new System.Drawing.Size(181, 26);
       this.exitToolStripMenuItem.Text = "Exit";
       this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
       // 
@@ -129,6 +131,13 @@
       this.timerDescente.Enabled = true;
       this.timerDescente.Interval = 500;
       this.timerDescente.Tick += new System.EventHandler(this.timerDescente_Tick);
+      // 
+      // restartToolStripMenuItem
+      // 
+      this.restartToolStripMenuItem.Name = "restartToolStripMenuItem";
+      this.restartToolStripMenuItem.Size = new System.Drawing.Size(181, 26);
+      this.restartToolStripMenuItem.Text = "Restart";
+      this.restartToolStripMenuItem.Click += new System.EventHandler(this.restartToolStripMenuItem_Click);
       // 
       // tetrisGameCore
       // 
@@ -157,6 +166,7 @@
     private System.Windows.Forms.ToolStripMenuItem optionsToolStripMenuItem;
     private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
     private System.Windows.Forms.Timer timerDescente;
+    private System.Windows.Forms.ToolStripMenuItem restartToolStripMenuItem;
   }
 }
 
