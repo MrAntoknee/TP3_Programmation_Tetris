@@ -11,20 +11,13 @@ namespace TP3
       InitializeComponent( );
     }
     //NEED COMMENTS
-    const int nbColonnesJeu = 20;
-    const int nbLignesJeu = 10;
+    int timerI = 0;
+    const int nbColonnesJeu = 10;
+    const int nbLignesJeu = 20;
     enum TypeBloc { None, Gelé, Carré, Ligne, T, L, J, S, Z }
     TypeBloc[,] etatBlocs = new TypeBloc[nbLignesJeu, nbColonnesJeu];
-
-<<<<<<< HEAD
-    
-=======
-    const int nbLignesJeu = 20;
-    const int nbColonnesJeu = 10;
     enum Deplacement { DESCENTE, DROITE, GAUCHE, ROTATION_HORAIRE, ROTATION_ANTIHORAIRE }
-    enum TypeBloc { None, Gele, Carre, Ligne, T, L, J, S, Z }
-
->>>>>>> origin/master
+    
     #region Code fourni
 
     // Représentation visuelles du jeu en mémoire.
@@ -40,11 +33,8 @@ namespace TP3
     {
       // Ne pas oublier de mettre en place les valeurs nécessaires à une partie.
       ExecuterTestsUnitaires();
-<<<<<<< HEAD
-      InitialiserSurfaceDeJeu(nbColonnesJeu, nbLignesJeu);
-=======
       InitialiserSurfaceDeJeu(nbLignesJeu, nbColonnesJeu);
->>>>>>> origin/master
+
     }
 
     private void InitialiserSurfaceDeJeu(int nbLignes, int nbCols)
@@ -104,14 +94,9 @@ namespace TP3
 
 
     #endregion
-<<<<<<< HEAD
-    /// <summary>
-    /// Permet la sortie de l'application à tout moment.
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-=======
 
+
+    
     Deplacement SaisirCoupJoueur()
     {
       Deplacement sens;
@@ -148,7 +133,7 @@ namespace TP3
       }
     }
 
-    bool BlocPeutBouger(Deplacement sens)
+  /*  bool BlocPeutBouger(Deplacement sens)
     {
       bool peutBouger = true;
       if (sens == DESCENTE)
@@ -209,14 +194,17 @@ namespace TP3
         }
       }
       return peutBouger;
-    }
-
->>>>>>> origin/master
+    }*/
+    /// <summary>
+    /// Permet la sortie de l'application à tout moment.
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
     private void exitToolStripMenuItem_Click(object sender, EventArgs e)
     {
       Application.Exit();
     }
-    private void RemplirTableauEtat()
+    void RemplirTableauEtat()
     {
       for (int compteur = 0; compteur < nbLignesJeu; compteur++)
       {
@@ -226,6 +214,24 @@ namespace TP3
         }
       }
     }
+
+    private void timerDescente_Tick(object sender, EventArgs e)
+    {
+      if (timerI < nbLignesJeu-1)
+      {
+        toutesImagesVisuelles[timerI, 5].BackColor = Color.Red;
+        toutesImagesVisuelles[timerI + 1, 5].BackColor = Color.Red;
+        toutesImagesVisuelles[timerI, 4].BackColor = Color.Red;
+        toutesImagesVisuelles[timerI + 1, 4].BackColor = Color.Red;
+        timerI++;
+        if (timerI >= 2)
+        {
+          toutesImagesVisuelles[timerI - 2, 5].BackColor = Color.Black;
+          toutesImagesVisuelles[timerI - 2, 4].BackColor = Color.Black;
+        }
+      }
+    }
+
   }
 
 

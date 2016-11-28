@@ -28,10 +28,12 @@
     /// </summary>
     private void InitializeComponent( )
     {
+      this.components = new System.ComponentModel.Container();
       this.tableauJeu = new System.Windows.Forms.TableLayoutPanel();
       this.menuStrip1 = new System.Windows.Forms.MenuStrip();
       this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.timerDescente = new System.Windows.Forms.Timer(this.components);
       this.menuStrip1.SuspendLayout();
       this.SuspendLayout();
       // 
@@ -57,7 +59,7 @@
       this.tableauJeu.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 27F));
       this.tableauJeu.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 27F));
       this.tableauJeu.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 27F));
-      this.tableauJeu.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 41F));
+      this.tableauJeu.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 52F));
       this.tableauJeu.Location = new System.Drawing.Point(231, 52);
       this.tableauJeu.Margin = new System.Windows.Forms.Padding(0);
       this.tableauJeu.Name = "tableauJeu";
@@ -118,9 +120,15 @@
       // exitToolStripMenuItem
       // 
       this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-      this.exitToolStripMenuItem.Size = new System.Drawing.Size(181, 26);
+      this.exitToolStripMenuItem.Size = new System.Drawing.Size(108, 26);
       this.exitToolStripMenuItem.Text = "Exit";
       this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
+      // 
+      // timerDescente
+      // 
+      this.timerDescente.Enabled = true;
+      this.timerDescente.Interval = 500;
+      this.timerDescente.Tick += new System.EventHandler(this.timerDescente_Tick);
       // 
       // tetrisGameCore
       // 
@@ -131,7 +139,7 @@
       this.Controls.Add(this.menuStrip1);
       this.KeyPreview = true;
       this.MainMenuStrip = this.menuStrip1;
-      this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+      this.Margin = new System.Windows.Forms.Padding(4);
       this.Name = "tetrisGameCore";
       this.Text = "Titris";
       this.Load += new System.EventHandler(this.frmLoad);
@@ -148,6 +156,7 @@
     private System.Windows.Forms.MenuStrip menuStrip1;
     private System.Windows.Forms.ToolStripMenuItem optionsToolStripMenuItem;
     private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
+    private System.Windows.Forms.Timer timerDescente;
   }
 }
 
