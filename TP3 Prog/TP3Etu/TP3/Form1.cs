@@ -89,6 +89,10 @@ namespace TP3
 
     #endregion
 
+    private void optionsToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+      Application.Exit();
+    }
   }
 
 
