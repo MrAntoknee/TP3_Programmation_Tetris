@@ -4,20 +4,24 @@ using System.Windows.Forms;
 
 namespace TP3
 {
+  enum TypeBloc { None, Gelé, Carré, Ligne, T, L, J, S, Z }
+  enum Deplacement { DESCENTE, DROITE, GAUCHE, ROTATION_HORAIRE, ROTATION_ANTIHORAIRE }
   public partial class tetrisGameCore : Form
   {
     public tetrisGameCore( )
     {
+      RemplirTableauEtat();
       InitializeComponent( );
     }
     //NEED COMMENTS
     int timerI = 0;
     const int nbColonnesJeu = 10;
     const int nbLignesJeu = 20;
-    enum TypeBloc { None, Gelé, Carré, Ligne, T, L, J, S, Z }
-    TypeBloc[,] etatBlocs = new TypeBloc[nbLignesJeu, nbColonnesJeu];
-    enum Deplacement { DESCENTE, DROITE, GAUCHE, ROTATION_HORAIRE, ROTATION_ANTIHORAIRE }
-    
+    int[,] etatBlocs = new int[nbLignesJeu, nbColonnesJeu];
+    int[] blocActifX = new int[4] { 0, 1, 0, 1 };
+    int[] blocActifY = new int[4] { 5, 4, 4, 5 };
+    Color[] toutesLesCouleurs = new Color[] { Color.Black, Color.Gray, Color.Red };
+
     #region Code fourni
 
     // Représentation visuelles du jeu en mémoire.
@@ -68,6 +72,7 @@ namespace TP3
       }
     }
     #endregion
+
 
 
     #region Code à développer
@@ -133,7 +138,7 @@ namespace TP3
       }
     }
 
-  /*  bool BlocPeutBouger(Deplacement sens)
+  /* bool BlocPeutBouger(Deplacement sens)
     {
       bool peutBouger = true;
       if (sens == DESCENTE)
@@ -208,30 +213,40 @@ namespace TP3
     {
       for (int compteur = 0; compteur < nbLignesJeu; compteur++)
       {
-        for (int compteur2 = 0; compteur2 < nbLignesJeu; compteur2++)
+        for (int compteur2 = 0; compteur2 < nbColonnesJeu; compteur2++)
         {
-          etatBlocs[compteur, compteur2] = TypeBloc.None;
+          etatBlocs[compteur, compteur2] = (int)TypeBloc.None;
         }
       }
     }
-
+    void refaireCouleurs()
+    {
+      etatBlocs[8, 8] = (int)TypeBloc.Gelé;//**********************************************
+      for (int compteur = 0; compteur < 4; compteur++)
+      {
+        etatBlocs[blocActifX[compteur], blocActifY[compteur]] = (int)TypeBloc.Carré;
+      }
+      for (int compteur = 0; compteur < nbLignesJeu; compteur++)
+      {
+        for (int compteur2 = 0; compteur2 < nbColonnesJeu; compteur2++)
+        {
+          toutesImagesVisuelles[compteur,compteur2].BackColor = toutesLesCouleurs[etatBlocs[compteur, compteur2]];
+        }
+      }
+    }
     private void timerDescente_Tick(object sender, EventArgs e)
     {
-      if (timerI < nbLignesJeu-1)
+      refaireCouleurs();
+      for (int compteur = 0; compteur < 4; compteur++)
       {
-        toutesImagesVisuelles[timerI, 5].BackColor = Color.Red;
-        toutesImagesVisuelles[timerI + 1, 5].BackColor = Color.Red;
-        toutesImagesVisuelles[timerI, 4].BackColor = Color.Red;
-        toutesImagesVisuelles[timerI + 1, 4].BackColor = Color.Red;
-        timerI++;
-        if (timerI >= 2)
-        {
-          toutesImagesVisuelles[timerI - 2, 5].BackColor = Color.Black;
-          toutesImagesVisuelles[timerI - 2, 4].BackColor = Color.Black;
-        }
+        etatBlocs[blocActifX[compteur], blocActifY[compteur]] = (int)TypeBloc.None;
       }
+      for (int compteur = 0; compteur < 4; compteur++)
+      {
+        blocActifX[compteur]++;
+      }
+      timerI++;
     }
-
   }
 
 
