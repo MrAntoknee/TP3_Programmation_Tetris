@@ -10,17 +10,21 @@ namespace TP3
   {
     public tetrisGameCore( )
     {
+      pieceAleatoire = PieceAleatoire();
+      blocActifX = AssignerPositionFormeX(pieceAleatoire);
+      blocActifY = AssignerPositionFormeY(pieceAleatoire);
       RemplirTableauEtat();
-      InitializeComponent( );
+      InitializeComponent();
     }
     //NEED COMMENTS
+    int pieceAleatoire = 0;
     int timerAction = 0;
     const int nbColonnesJeu = 10;
     const int nbLignesJeu = 20;
     int[,] etatBlocs = new int[nbLignesJeu, nbColonnesJeu];
-    int[] blocActifX = new int[4] { 0, 1, 0, 1 };
-    int[] blocActifY = new int[4] { 5, 4, 4, 5 };
-    Color[] toutesLesCouleurs = new Color[] { Color.Black, Color.Gray, Color.Red };
+    int[] blocActifX = null;
+    int[] blocActifY = null;
+    Color[] toutesLesCouleurs = new Color[] { Color.Black, Color.Gray, Color.Red, Color.Teal };
 
     #region Code fourni
 
@@ -101,86 +105,49 @@ namespace TP3
     #endregion
 
 
-    
-    Deplacement SaisirCoupJoueur()
-    {
-      Deplacement sens;
-      ConsoleKeyInfo info = Console.ReadKey();
-      if (info.Key == ConsoleKey.LeftArrow)
-      {
-        sens = Deplacement.GAUCHE;
-        return sens;
-      }
-      else if (info.Key == ConsoleKey.RightArrow)
-      {
-        sens = Deplacement.DROITE;
-        return sens;
-      }
-      else if (info.Key == ConsoleKey.UpArrow)
-      {
-        sens = Deplacement.ROTATION_HORAIRE;
-        return sens;
-      }
-      else if (info.Key == ConsoleKey.DownArrow)
-      {
-        sens = Deplacement.ROTATION_ANTIHORAIRE;
-        return sens;
-      }
-      else if (info.Key == ConsoleKey.Spacebar)
-      {
-        sens = Deplacement.DESCENTE;
-        return sens;
-      }
-      else
-      {
-        sens = Deplacement.DESCENTE;
-        return sens;
-      }
-    }
-
-  /*bool BlocPeutBouger(Deplacement sens)
+  /*bool BlocPeutBouger(KeyPressEventArgs e)
     {
       bool peutBouger = true;
-      if (sens == DESCENTE)
+      if (e == 65)
       {
         for (int i = 0; i < blocActifX.Length; i++)
         {
           for (int j = 0; j < blocActifY.Length; j++)
           {
-            if ((blocActifX[i] && (blocActifY[j] + 1)) == TypeBloc.Gele || (blocActifY[j] + 1) >= nbLignesJeu)
+            if (blocActifX[i] == (int)TypeBloc.Gelé && (blocActifY[j] + 1) == (int)TypeBloc.Gelé || (blocActifY[j] + 1) >= nbLignesJeu)
             {
               peutBouger = false;
             }
           }
         }
       }
-      else if (sens == GAUCHE)
+      else if (sens == Deplacement.GAUCHE)
       {
         for (int i = 0; i < blocActifX.Length; i++)
         {
-          if (blocActifX[i] - 1 < 0 || blocActifX[i] - 1 == TypeBloc.Gele)
+          if (blocActifX[i] - 1 < 0 || blocActifX[i] - 1 == (int)TypeBloc.Gelé)
           {
             peutBouger = false;
           }
         }
       }
-      else if (sens == DROITE)
+      else if (sens == Deplacement.DROITE)
       {
         for(int i = 0; i < blocActifX.Length; i++)
         {
-          if (blocActifX[i] + 1 >= nbColonnesJeu || blocActifX[i] + 1 == TypeBloc.Gele)
+          if (blocActifX[i] + 1 >= nbColonnesJeu || blocActifX[i] + 1 == (int)TypeBloc.Gelé)
           {
             peutBouger = false;
           }
         }
       }
-      else if(sens == ROTATION_ANTIHORAIRE)
+      else if(sens == Deplacement.ROTATION_ANTIHORAIRE)
       {
-        for (int i = 0; i < blocAcifY.Length; i++)
+        for (int i = 0; i < blocActifY.Length; i++)
         {
           blocActifNouveauY[i] = -blocActifX[i];
           blocActifNouveauX[i] = blocActifY[i];
-          if (blocActifNouveauY[i] == TypeBloc.Gele || blocActifNouveauX[i] == TypeBloc.Gele || blocActifNouveauY[i] + 1 >= nbColonnesJeu)
+          if (blocActifNouveauY[i] == (int)TypeBloc.Gelé || blocActifNouveauX[i] == (int)TypeBloc.Gelé || blocActifNouveauY[i] + 1 >= nbColonnesJeu)
           {
             peutBouger = false;
           }
@@ -188,11 +155,11 @@ namespace TP3
       }
       else
       {
-        for (int i = 0; i < blocAcifY.Length; i++)
+        for (int i = 0; i < blocActifY.Length; i++)
         {
           blocActifNouveauY[i] = blocActifX[i];
           blocActifNouveauX[i] = -blocActifY[i];
-          if (blocActifNouveauY[i] == TypeBloc.Gele || blocActifNouveauX[i] == TypeBloc.Gele || (blocActifNouveauY[i] + 1 < 0)
+          if (blocActifNouveauY[i] == (int)TypeBloc.Gelé || blocActifNouveauX[i] == (int)TypeBloc.Gelé || (blocActifNouveauY[i] + 1) < 0)
           {
             peutBouger = false;
           }
@@ -221,10 +188,11 @@ namespace TP3
     }
     void refaireCouleurs()
     {
-      etatBlocs[8, 5] = (int)TypeBloc.Gelé;//**********************************************
+      RemplirTableauEtat();
+      etatBlocs[8, 5] = (int)TypeBloc.Gelé;//**************************************************************************************************************
       for (int compteur = 0; compteur < 4; compteur++)
       {
-        etatBlocs[blocActifX[compteur], blocActifY[compteur]] = (int)TypeBloc.Carré;
+        etatBlocs[blocActifX[compteur], blocActifY[compteur]] = pieceAleatoire;
       }
       for (int compteur = 0; compteur < nbLignesJeu; compteur++)
       {
@@ -236,7 +204,6 @@ namespace TP3
     }
     private void timerDescente_Tick(object sender, EventArgs e)
     {
-      refaireCouleurs();
       for (int compteur = 0; compteur < 4; compteur++)
       {
         etatBlocs[blocActifX[compteur], blocActifY[compteur]] = (int)TypeBloc.None;
@@ -246,6 +213,7 @@ namespace TP3
         blocActifX[compteur]++;
       }
       timerAction++;
+      refaireCouleurs();
     }
 
     private void restartToolStripMenuItem_Click(object sender, EventArgs e)
@@ -259,9 +227,7 @@ namespace TP3
     void refaireJeu()
     {
       timerDescente.Stop();
-      blocActifX = new int[4] { 0, 1, 0, 1 };
-      blocActifY = new int[4] { 5, 4, 4, 5 };
-      timerAction = 0;
+           timerAction = 0;
       for (int compteur = 0; compteur < nbLignesJeu; compteur++)
       {
         for (int compteur2 = 0; compteur2 < nbColonnesJeu; compteur2++)
@@ -273,8 +239,106 @@ namespace TP3
       timerDescente.Start();
     }
     //</alangevin>
-  }
+    int[] AssignerPositionFormeX(int pieceAleatoire)
+    {
+      int[] tableauValeurBlocs;
+      if (pieceAleatoire == (int)TypeBloc.Carré)
+      {
+       return tableauValeurBlocs = new int[4] { 0, 1, 0, 1 };
+      }
+      else if (pieceAleatoire == (int)TypeBloc.Ligne)
+      {
+        return tableauValeurBlocs = new int[4] { 0, 1, 2, 3 };
+      }
+      else 
+      {
+        return tableauValeurBlocs = new int[4] { 0, 0, 0, 0 };
+      }
+    }
+    int[] AssignerPositionFormeY(int pieceAleatoire)
+    {
+      int[] tableauValeurBlocs;
+      if (pieceAleatoire == (int)TypeBloc.Carré)
+      {
+        return tableauValeurBlocs = new int[4] { 5, 4, 4, 5 };
+      }
+      else if (pieceAleatoire == (int)TypeBloc.Ligne)
+      {
+        return tableauValeurBlocs = new int[4] { 5, 5, 5, 5 };
+      }
+      else
+      {
+        return tableauValeurBlocs = new int[4] { 0, 0, 0, 0 };
+      }
+    }
+    int PieceAleatoire()
+    {
+      Random rnd = new Random();
+      int blocAleatoire = rnd.Next(2,4);
+      return blocAleatoire;
+    }
 
+    private void tetrisGameCore_KeyPress(object sender, KeyPressEventArgs e)
+    {
+      if (e.KeyChar == 65 || e.KeyChar == 97)
+      {
+        for (int compteur = 0; compteur < blocActifY.Length;compteur++)
+        {
+          blocActifY[compteur]--;
+          refaireCouleurs();
+        }
+      }
+      else if (e.KeyChar == 68 || e.KeyChar == 100)
+      {
+        for (int compteur = 0; compteur < blocActifY.Length; compteur++)
+        {
+          blocActifY[compteur]++;
+          refaireCouleurs();
+        }
+      }
+      //<alangevin>
+      else if (e.KeyChar == 69 || e.KeyChar == 101)
+      {
+        int[] blocActifNouveauY = blocActifY;
+        int[] blocActifNouveauX = blocActifX;
+        int abc = 1;
+        int compteurExterne = 0;
+        for (int compteur = 1; compteur < blocActifY.Length; compteur++)
+        {
+          if(compteurExterne%2 == 0)
+          {
+            blocActifY[compteur] = blocActifNouveauY[0] - abc;
+            blocActifX[compteur] = blocActifNouveauX[0];
+            abc++;
+          }
+          else 
+          {
+            
+          }
+        }
+        refaireCouleurs();
+      }
+      /*else if (info.Key == ConsoleKey.DownArrow)
+      {
+        sens = Deplacement.ROTATION_ANTIHORAIRE;
+        return sens;
+      }*/
+      //</alangevin>
+      else if (e.KeyChar == 83 || e.KeyChar == 32 || e.KeyChar == 115)
+      {
+        for (int compteur = 0; compteur < blocActifX.Length; compteur++)
+        {
+          blocActifX[compteur]++;
+          refaireCouleurs();
+        }
+      }
+      else
+      {
+
+      }
+    }
+  }
+  
 
 
 

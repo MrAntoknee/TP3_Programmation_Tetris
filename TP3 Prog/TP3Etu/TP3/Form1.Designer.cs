@@ -33,8 +33,8 @@
       this.menuStrip1 = new System.Windows.Forms.MenuStrip();
       this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-      this.timerDescente = new System.Windows.Forms.Timer(this.components);
       this.restartToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.timerDescente = new System.Windows.Forms.Timer(this.components);
       this.menuStrip1.SuspendLayout();
       this.SuspendLayout();
       // 
@@ -122,22 +122,22 @@
       // exitToolStripMenuItem
       // 
       this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-      this.exitToolStripMenuItem.Size = new System.Drawing.Size(181, 26);
+      this.exitToolStripMenuItem.Size = new System.Drawing.Size(130, 26);
       this.exitToolStripMenuItem.Text = "Exit";
       this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
-      // 
-      // timerDescente
-      // 
-      this.timerDescente.Enabled = true;
-      this.timerDescente.Interval = 500;
-      this.timerDescente.Tick += new System.EventHandler(this.timerDescente_Tick);
       // 
       // restartToolStripMenuItem
       // 
       this.restartToolStripMenuItem.Name = "restartToolStripMenuItem";
-      this.restartToolStripMenuItem.Size = new System.Drawing.Size(181, 26);
+      this.restartToolStripMenuItem.Size = new System.Drawing.Size(130, 26);
       this.restartToolStripMenuItem.Text = "Restart";
       this.restartToolStripMenuItem.Click += new System.EventHandler(this.restartToolStripMenuItem_Click);
+      // 
+      // timerDescente
+      // 
+      this.timerDescente.Enabled = true;
+      this.timerDescente.Interval = 1000;
+      this.timerDescente.Tick += new System.EventHandler(this.timerDescente_Tick);
       // 
       // tetrisGameCore
       // 
@@ -152,6 +152,7 @@
       this.Name = "tetrisGameCore";
       this.Text = "Titris";
       this.Load += new System.EventHandler(this.frmLoad);
+      this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.tetrisGameCore_KeyPress);
       this.menuStrip1.ResumeLayout(false);
       this.menuStrip1.PerformLayout();
       this.ResumeLayout(false);
