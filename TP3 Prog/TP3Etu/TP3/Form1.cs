@@ -17,6 +17,8 @@ namespace TP3
       InitializeComponent();
     }
     //NEED COMMENTS
+    int addX = 0;
+    int addY = 5;
     int pieceAleatoire = 0;
     int timerAction = 0;
     const int nbColonnesJeu = 10;
@@ -192,7 +194,7 @@ namespace TP3
       etatBlocs[8, 5] = (int)TypeBloc.Gelé;//**************************************************************************************************************
       for (int compteur = 0; compteur < 4; compteur++)
       {
-        etatBlocs[blocActifX[compteur], blocActifY[compteur]] = pieceAleatoire;
+        etatBlocs[(blocActifX[compteur] + addX), blocActifY[compteur] + addY] = pieceAleatoire;
       }
       for (int compteur = 0; compteur < nbLignesJeu; compteur++)
       {
@@ -206,12 +208,11 @@ namespace TP3
     {
       for (int compteur = 0; compteur < 4; compteur++)
       {
-        etatBlocs[blocActifX[compteur], blocActifY[compteur]] = (int)TypeBloc.None;
+        etatBlocs[(blocActifX[compteur] + addX), blocActifY[compteur] + addY] = (int)TypeBloc.None;
       }
-      for (int compteur = 0; compteur < 4; compteur++)
-      {
-        blocActifX[compteur]++;
-      }
+
+        addX++;
+      
       timerAction++;
       refaireCouleurs();
     }
@@ -260,11 +261,11 @@ namespace TP3
       int[] tableauValeurBlocs;
       if (pieceAleatoire == (int)TypeBloc.Carré)
       {
-        return tableauValeurBlocs = new int[4] { 5, 4, 4, 5 };
+        return tableauValeurBlocs = new int[4] { 1, 0, 0, 1 };
       }
       else if (pieceAleatoire == (int)TypeBloc.Ligne)
       {
-        return tableauValeurBlocs = new int[4] { 5, 5, 5, 5 };
+        return tableauValeurBlocs = new int[4] { 0, 0, 0, 0 };
       }
       else
       {
@@ -282,39 +283,26 @@ namespace TP3
     {
       if (e.KeyChar == 65 || e.KeyChar == 97)
       {
-        for (int compteur = 0; compteur < blocActifY.Length;compteur++)
-        {
-          blocActifY[compteur]--;
+          addY--;
           refaireCouleurs();
-        }
       }
       else if (e.KeyChar == 68 || e.KeyChar == 100)
       {
-        for (int compteur = 0; compteur < blocActifY.Length; compteur++)
-        {
-          blocActifY[compteur]++;
+          addY++;
           refaireCouleurs();
-        }
       }
       //<alangevin>
       else if (e.KeyChar == 69 || e.KeyChar == 101)
       {
-        int[] blocActifNouveauY = blocActifY;
-        int[] blocActifNouveauX = blocActifX;
-        int abc = 1;
-        int compteurExterne = 0;
-        for (int compteur = 1; compteur < blocActifY.Length; compteur++)
+        int[] temporaireTableauY = new int[4];
+        for (int compteur = 0; compteur < blocActifY.Length; compteur++)
         {
-          if(compteurExterne%2 == 0)
-          {
-            blocActifY[compteur] = blocActifNouveauY[0] - abc;
-            blocActifX[compteur] = blocActifNouveauX[0];
-            abc++;
-          }
-          else 
-          {
-            
-          }
+          temporaireTableauY[compteur] = blocActifY[compteur];
+          blocActifY[compteur] = -blocActifX[compteur];
+        }
+        for (int compteur = 0; compteur < blocActifY.Length; compteur++)
+        {
+          blocActifX[compteur] = temporaireTableauY[compteur];
         }
         refaireCouleurs();
       }
