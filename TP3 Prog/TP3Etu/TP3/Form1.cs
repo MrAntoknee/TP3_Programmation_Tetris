@@ -4,16 +4,13 @@ using System.Windows.Forms;
 
 namespace TP3
 {
-  enum TypeBloc { None, Gelé, Carré, Ligne, T, L, J, S, Z }
+  enum TypeBloc { None, Gelé, Carré, Ligne, LigneVerticale, T, L, J, S, Z }
   enum Deplacement { DESCENTE, DROITE, GAUCHE, ROTATION_HORAIRE, ROTATION_ANTIHORAIRE }
   public partial class tetrisGameCore : Form
   {
     public tetrisGameCore( )
     {
-      pieceAleatoire = PieceAleatoire();
-      blocActifX = AssignerPositionFormeX(pieceAleatoire);
-      blocActifY = AssignerPositionFormeY(pieceAleatoire);
-      RemplirTableauEtat();
+      FonctionsJeu();
       InitializeComponent();
     }
     //NEED COMMENTS
@@ -26,7 +23,7 @@ namespace TP3
     int[,] etatBlocs = new int[nbLignesJeu, nbColonnesJeu];
     int[] blocActifX = null;
     int[] blocActifY = null;
-    Color[] toutesLesCouleurs = new Color[] { Color.Black, Color.Gray, Color.Red, Color.Teal };
+    Color[] toutesLesCouleurs = new Color[] { Color.Black, Color.Gray, Color.Red, Color.Teal, Color.Teal };
 
     #region Code fourni
 
@@ -220,6 +217,7 @@ namespace TP3
     private void restartToolStripMenuItem_Click(object sender, EventArgs e)
     {
       refaireJeu();
+      
     }
     /// <summary>
     /// Fonction qui recommence le jeu à zéro.
@@ -228,7 +226,10 @@ namespace TP3
     void refaireJeu()
     {
       timerDescente.Stop();
-           timerAction = 0;
+      timerAction = 0;
+      addX = 0;
+      addY = 5;
+      pieceAleatoire = 0;
       for (int compteur = 0; compteur < nbLignesJeu; compteur++)
       {
         for (int compteur2 = 0; compteur2 < nbColonnesJeu; compteur2++)
@@ -237,6 +238,7 @@ namespace TP3
           toutesImagesVisuelles[compteur, compteur2].BackColor = toutesLesCouleurs[etatBlocs[compteur, compteur2]];
         }
       }
+      FonctionsJeu();
       timerDescente.Start();
     }
     //</alangevin>
@@ -267,6 +269,10 @@ namespace TP3
       {
         return tableauValeurBlocs = new int[4] { 0, 0, 0, 0 };
       }
+      else if(pieceAleatoire == (int)TypeBloc.LigneVerticale)
+      {
+        return tableauValeurBlocs = new int[4] { 0, 1, 2, 3 };
+      }
       else
       {
         return tableauValeurBlocs = new int[4] { 0, 0, 0, 0 };
@@ -275,7 +281,7 @@ namespace TP3
     int PieceAleatoire()
     {
       Random rnd = new Random();
-      int blocAleatoire = rnd.Next(2,4);
+      int blocAleatoire = rnd.Next(2,5);
       return blocAleatoire;
     }
 
@@ -283,13 +289,13 @@ namespace TP3
     {
       if (e.KeyChar == 65 || e.KeyChar == 97)
       {
-          addY--;
-          refaireCouleurs();
+        addY--;
+        refaireCouleurs();
       }
       else if (e.KeyChar == 68 || e.KeyChar == 100)
       {
-          addY++;
-          refaireCouleurs();
+        addY++;
+        refaireCouleurs();
       }
       //<alangevin>
       else if (e.KeyChar == 69 || e.KeyChar == 101)
@@ -306,24 +312,37 @@ namespace TP3
         }
         refaireCouleurs();
       }
-      /*else if (info.Key == ConsoleKey.DownArrow)
+      else if (e.KeyChar == 81 || e.KeyChar == 113)
       {
-        sens = Deplacement.ROTATION_ANTIHORAIRE;
-        return sens;
-      }*/
+        int[] temporaireTableauY = new int[4];
+        for (int compteur = 0; compteur < blocActifY.Length; compteur++)
+        {
+          temporaireTableauY[compteur] = -blocActifY[compteur];
+          blocActifY[compteur] = blocActifX[compteur];
+        }
+        for (int compteur = 0; compteur < blocActifY.Length; compteur++)
+        {
+          blocActifX[compteur] = temporaireTableauY[compteur];
+        }
+        refaireCouleurs();
+      }
       //</alangevin>
       else if (e.KeyChar == 83 || e.KeyChar == 32 || e.KeyChar == 115)
       {
-        for (int compteur = 0; compteur < blocActifX.Length; compteur++)
-        {
-          blocActifX[compteur]++;
-          refaireCouleurs();
-        }
+        addX++;
+        refaireCouleurs();
       }
       else
       {
 
       }
+    }
+    void FonctionsJeu ()
+    {
+      pieceAleatoire = PieceAleatoire();
+      blocActifX = AssignerPositionFormeX(pieceAleatoire);
+      blocActifY = AssignerPositionFormeY(pieceAleatoire);
+      RemplirTableauEtat();
     }
   }
   
