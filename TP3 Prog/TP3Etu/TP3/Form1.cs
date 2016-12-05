@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
+using WMPLib;
+
 
 namespace TP3
 {
@@ -8,21 +10,26 @@ namespace TP3
   enum Deplacement { DESCENTE, DROITE, GAUCHE, ROTATION_HORAIRE, ROTATION_ANTIHORAIRE }
   public partial class tetrisGameCore : Form
   {
+    private frmConfigurations configs;
     public tetrisGameCore( )
     {
       FonctionsJeu();
       InitializeComponent();
+      timerDescente.Stop();
     }
     //NEED COMMENTS
+    const int nbColonnesJeu = 10;
+    const int nbLignesJeu = 20;
     int addX = 0;
     int addY = (nbColonnesJeu/2);
     int pieceAleatoire = 0;
-    const int nbColonnesJeu = 10;
-    const int nbLignesJeu = 20;
-    int[,] etatBlocs = new int[nbLignesJeu, nbColonnesJeu];
+    bool musiqueActive = false;
+    int[,] etatBlocs = null;
     int[] blocActifX = null;
     int[] blocActifY = null;
     Color[] toutesLesCouleurs = new Color[] { Color.Black, Color.Gray, Color.Red, Color.Teal, Color.Teal };
+    // Variable nécessaire pour jouer le son
+    WindowsMediaPlayer mediaPlayer = new WindowsMediaPlayer();
 
     #region Code fourni
 
@@ -37,15 +44,15 @@ namespace TP3
     /// <param name="e"></param>
     private void frmLoad( object sender, EventArgs e )
     {
-      // Ne pas oublier de mettre en place les valeurs nécessaires à une partie.
       ExecuterTestsUnitaires();
-      InitialiserSurfaceDeJeu(nbLignesJeu, nbColonnesJeu);
-
+      configs = new frmConfigurations();
+      InitialiserSurfaceDeJeu(configs.trackBarLignes.Value, configs.trackBarColonnes.Value);
     }
 
     private void InitialiserSurfaceDeJeu(int nbLignes, int nbCols)
     {
       // Création d'une surface de jeu 10 colonnes x 20 lignes
+      etatBlocs = new int[nbLignesJeu, nbColonnesJeu];
       toutesImagesVisuelles = new PictureBox[nbLignes, nbCols];
       tableauJeu.Controls.Clear();
       tableauJeu.ColumnCount = toutesImagesVisuelles.GetLength(1);
@@ -233,14 +240,9 @@ namespace TP3
         }
       }
     }
-    void faireCouleursBlocs()
+    void FaireCouleursBlocs()
     {
       RemplirTableauEtatVide();
-      etatBlocs[0, 5] = (int)TypeBloc.Gelé;//**************************************************************************************************************
-      etatBlocs[8, 5] = (int)TypeBloc.Gelé;
-      etatBlocs[8, 4] = (int)TypeBloc.Gelé;
-      etatBlocs[9, 5] = (int)TypeBloc.Gelé;
-      etatBlocs[9, 4] = (int)TypeBloc.Gelé;
       for (int compteur = 0; compteur < 4; compteur++)
       {
         etatBlocs[(blocActifX[compteur] + addX), blocActifY[compteur] + addY] = pieceAleatoire;
@@ -261,7 +263,7 @@ namespace TP3
           etatBlocs[(blocActifX[compteur] + addX), blocActifY[compteur] + addY] = (int)TypeBloc.None;
         }
       addX++;
-      faireCouleursBlocs();
+      FaireCouleursBlocs();
     }
 
     private void restartToolStripMenuItem_Click(object sender, EventArgs e)
@@ -360,13 +362,13 @@ namespace TP3
         if (e.KeyChar == 65 || e.KeyChar == 97)
         {
           addY--;
-          faireCouleursBlocs();
+          FaireCouleursBlocs();
         }
         //Droite
         else if (e.KeyChar == 68 || e.KeyChar == 100)
         {
           addY++;
-          faireCouleursBlocs();
+          FaireCouleursBlocs();
         }
         //<alangevin>
         //Tourne e
@@ -382,7 +384,7 @@ namespace TP3
             blocActifY[compteur] = -blocActifX[compteur];
             blocActifX[compteur] = temporaireTableauY[compteur];
           }
-          faireCouleursBlocs();
+          FaireCouleursBlocs();
         }
         //Tourne q
         else if (e.KeyChar == 81 || e.KeyChar == 113)
@@ -397,36 +399,52 @@ namespace TP3
             blocActifY[compteur] = blocActifX[compteur];
             blocActifX[compteur] = temporaireTableauY[compteur];
           }
-          faireCouleursBlocs();
+          FaireCouleursBlocs();
         }
         //</alangevin>
         //Descendre
         else if (e.KeyChar == 83 || e.KeyChar == 32 || e.KeyChar == 115)
         {
           addX++;
-          faireCouleursBlocs();
+          FaireCouleursBlocs();
         }
         else
         {
-          faireCouleursBlocs();
+          FaireCouleursBlocs();
         }
       }
     }
     void VerifierSiPartieTermine ()
     {
-      for (int i = 0; i < blocActifX.Length; i++)
-        if (etatBlocs[(blocActifX[i] + addX), (blocActifY[i] + addY)] != (int)TypeBloc.None) 
-        {
-          timerDescente.Stop();
-        }
+      pieceAleatoire = PieceAleatoire();
+      blocActifX = AssignerPositionFormeX(pieceAleatoire);
+      blocActifY = AssignerPositionFormeY(pieceAleatoire);
     }
+    //<ADion>
+    private void démarrerLaPartieToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+      FaireCouleursBlocs();
+      timerDescente.Start();
+    }
+
+    private void congigToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+      configs.SpecifierNbLignes(nbLignesJeu);
+      configs.SpecifierNbColonnes(nbColonnesJeu);
+      if (configs.ShowDialog() == DialogResult.OK)
+      {
+        nbLignesJeu = configs.ObtenirNbLignes();
+        nbColonnesJeu = configs.ObtenirNbColonnes();
+        musiqueActive = configs.MusiqueActive();
+        InitialiserSurfaceDeJeu(nbLignesJeu, nbColonnesJeu);
+        if (musiqueActive == true)
+        {
+          mediaPlayer.URL = "Resources/background.mp3";
+          mediaPlayer.controls.play();
+        }
+      }
+      RemplirTableauEtatVide();
+    }
+    //</ADion>
   }
-  
-
-
-
-
-
-
-
 }
