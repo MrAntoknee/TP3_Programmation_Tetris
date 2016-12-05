@@ -18,10 +18,10 @@ namespace TP3
       timerDescente.Stop();
     }
     //NEED COMMENTS
-    const int nbColonnesJeu = 10;
-    const int nbLignesJeu = 20;
+    int nbColonnesJeu = 10;
+    int nbLignesJeu = 20;
     int addX = 0;
-    int addY = (nbColonnesJeu/2);
+    int addY = 0;
     int pieceAleatoire = 0;
     bool musiqueActive = false;
     int[,] etatBlocs = null;
@@ -113,7 +113,7 @@ namespace TP3
     bool BlocPeutBouger(KeyPressEventArgs e)
     {
       bool peutBouger = true;
-      // Descendre
+      //Vérification, bouger la pièce vers le bas
       if (e.KeyChar == 83 || e.KeyChar == 32 || e.KeyChar == 115)
       {
         for (int i = 0; i < blocActifX.Length; i++)
@@ -128,7 +128,7 @@ namespace TP3
           }
         }
       }
-      // Gauche
+      //Vérification, bouger la pièce vers la gauche
       else if (e.KeyChar == 65 || e.KeyChar == 97)
       {
         for (int i = 0; i < blocActifY.Length; i++)
@@ -143,7 +143,7 @@ namespace TP3
           }
         }
       }
-      // Droite
+      //Vérification, bouger la pièce vers la droite
       else if (e.KeyChar == 68 || e.KeyChar == 100)
       {
         for (int i = 0; i < blocActifY.Length; i++)
@@ -159,7 +159,7 @@ namespace TP3
         }
       }
       //<alangevin>
-      // Rotation q
+      //Vérification, bouger la pièce du sens anti-horaire
       else if (e.KeyChar == 81 || e.KeyChar == 113)
       {
         int[] temporaireTableauY = new int[4];
@@ -171,12 +171,12 @@ namespace TP3
         }
         for (int i = 0; i < blocActifY.Length; i++)
         {
-          // Vérification des côtés
+          // Vérification des côtés du tableau
           if ((temporaireTableauY[i] + addY) >= nbColonnesJeu || (temporaireTableauY[i] + addY) < 0)
           {
             peutBouger = false;
           }
-          // Vérification haut et bas
+          // Vérification haut et bas du tableau
           else if ((temporaireTableauX[i] + addX) >= nbLignesJeu || (temporaireTableauX[i] + addX) <= 0)
           {
             peutBouger = false;
@@ -188,7 +188,7 @@ namespace TP3
           }
         }
       }
-      // Rotation e
+      //Vérification, bouger la pièce du sens horaire
       else if (e.KeyChar == 69 || e.KeyChar == 101)
       {
         int[] temporaireTableauY = new int[4];
@@ -200,12 +200,12 @@ namespace TP3
         }
         for (int i = 0; i < blocActifY.Length; i++)
         {
-          // Vérification des côtés
+          // Vérification des côtés du tableau
           if ((temporaireTableauY[i] + addY) >= nbColonnesJeu || (temporaireTableauY[i] + addY) < 0)
             {
               peutBouger = false;
             }
-          // Vérification haut et bas
+          // Vérification haut et bas du tableau
           else if ((temporaireTableauX[i] + addX) >= nbLignesJeu || (temporaireTableauX[i] + addX) <= 0)
             {
               peutBouger = false;
@@ -230,6 +230,10 @@ namespace TP3
     {
       Application.Exit();
     }
+
+    /// <summary>
+    /// Fonction qui met les cubes du tableau à rien
+    /// </summary>
     void RemplirTableauEtatVide()
     {
       for (int compteur = 0; compteur < nbLignesJeu; compteur++)
@@ -240,6 +244,9 @@ namespace TP3
         }
       }
     }
+    /// <summary>
+    /// Fonction qui entre la position courante des blocs actifs
+    /// </summary>
     void FaireCouleursBlocs()
     {
       RemplirTableauEtatVide();
@@ -255,7 +262,11 @@ namespace TP3
         }
       }
     }
-
+    /// <summary>
+    /// Timer qui permet la descente des blocs actifs
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
     private void timerDescente_Tick(object sender, EventArgs e)
     {
       for (int compteur = 0; compteur < 4; compteur++)
@@ -265,15 +276,20 @@ namespace TP3
       addX++;
       FaireCouleursBlocs();
     }
-
+    /// <summary>
+    /// Fonction qui est appellé lors d'un click sur le bouton recommencer partie
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    //<alangevin>
     private void restartToolStripMenuItem_Click(object sender, EventArgs e)
     {
       refaireJeu(); 
     }
+
     /// <summary>
     /// Fonction qui recommence le jeu à zéro.
     /// </summary>
-    //<alangevin>
     void refaireJeu()
     {
       timerDescente.Stop();
@@ -292,7 +308,11 @@ namespace TP3
       timerDescente.Start();
     }
     //</alangevin>
-
+    /// <summary>
+    /// Fonction qui assigne la position de départ de la pièce choisie
+    /// </summary>
+    /// <param name="pieceAleatoire">Représente sous un entier la pièce choisie aléatoirement</param>
+    /// <returns>Retourne les positions initiales de l'axe des x en entier de la pièce choisie </returns>
     int[] AssignerPositionFormeX(int pieceAleatoire)
     {
       int[] tableauValeurBlocs;
@@ -310,6 +330,11 @@ namespace TP3
       }
     }
 
+    /// <summary>
+    /// Fonction qui assigne la position de départ de la pièce choisie
+    /// </summary>
+    /// <param name="pieceAleatoire">Représente sous un entier la pièce choisie aléatoirement</param>
+    /// <returns>Retourne les positions initiales de l'axe des y en entier de la pièce choisie </returns>
     int[] AssignerPositionFormeY(int pieceAleatoire)
     {
       int[] tableauValeurBlocs;
@@ -331,6 +356,10 @@ namespace TP3
       }
     }
 
+    /// <summary>
+    /// Fonction qui choisie la pièce aléatoire.
+    /// </summary>
+    /// <returns>Retourne sous un entier la pièce choisie aléatoirement</returns>
     int PieceAleatoire()
     {
       Random rnd = new Random();
@@ -338,13 +367,22 @@ namespace TP3
       return blocAleatoire;
     }
 
+    /// <summary>
+    /// Fonction qui à chaque mouvement appelle la fonction qui effectue le mouvement.
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
     private void tetrisGameCore_KeyPress(object sender, KeyPressEventArgs e)
     {
       MouvementJoueur(e);
     }
 
+    /// <summary>
+    /// Fonction qui appelle toute les fonctions nécessaire au fonctionnement du jeu
+    /// </summary>
     void FonctionsJeu ()
     {
+      addY = (nbColonnesJeu / 2);
       pieceAleatoire = PieceAleatoire();
       blocActifX = AssignerPositionFormeX(pieceAleatoire);
       blocActifY = AssignerPositionFormeY(pieceAleatoire);
@@ -352,26 +390,30 @@ namespace TP3
       RemplirTableauEtatVide();
     }
 
+    /// <summary>
+    /// Fonction qui permet le mouvement de la pièce selon la touche que le joueur pèse
+    /// </summary>
+    /// <param name="e"></param>
     void MouvementJoueur(KeyPressEventArgs e)
     {
       bool reponseBouger = true;
       reponseBouger = BlocPeutBouger(e);
       if (reponseBouger == true)
       {
-        //Gauche
+        //Bouger la pièce à gauche
         if (e.KeyChar == 65 || e.KeyChar == 97)
         {
           addY--;
           FaireCouleursBlocs();
         }
-        //Droite
+        //Bouger la pièce à droite
         else if (e.KeyChar == 68 || e.KeyChar == 100)
         {
           addY++;
           FaireCouleursBlocs();
         }
         //<alangevin>
-        //Tourne e
+        //Bouger la pièce du sens horaire
         else if (e.KeyChar == 69 || e.KeyChar == 101)
         {
           int[] temporaireTableauY = new int[4];
@@ -386,7 +428,7 @@ namespace TP3
           }
           FaireCouleursBlocs();
         }
-        //Tourne q
+        //Bouger la pièce du sens anti-horaire
         else if (e.KeyChar == 81 || e.KeyChar == 113)
         {
           int[] temporaireTableauY = new int[4];
@@ -402,7 +444,7 @@ namespace TP3
           FaireCouleursBlocs();
         }
         //</alangevin>
-        //Descendre
+        //Bouger la pièce vers le bas
         else if (e.KeyChar == 83 || e.KeyChar == 32 || e.KeyChar == 115)
         {
           addX++;
@@ -414,6 +456,9 @@ namespace TP3
         }
       }
     }
+    /// <summary>
+    /// 
+    /// </summary>
     void VerifierSiPartieTermine ()
     {
       pieceAleatoire = PieceAleatoire();
