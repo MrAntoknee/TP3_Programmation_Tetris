@@ -13,9 +13,9 @@ namespace TP3
     private frmConfigurations configs;
     public tetrisGameCore( )
     {
-      FonctionsJeu();
       InitializeComponent();
       timerDescente.Stop();
+      FonctionsJeu();
     }
     //NEED COMMENTS
     int nbColonnesJeu = 10;
@@ -46,7 +46,7 @@ namespace TP3
     {
       ExecuterTestsUnitaires();
       configs = new frmConfigurations();
-      InitialiserSurfaceDeJeu(configs.trackBarLignes.Value, configs.trackBarColonnes.Value);
+      InitialiserSurfaceDeJeu(nbLignesJeu, nbColonnesJeu);
     }
 
     private void InitialiserSurfaceDeJeu(int nbLignes, int nbCols)
@@ -284,13 +284,13 @@ namespace TP3
     //<alangevin>
     private void restartToolStripMenuItem_Click(object sender, EventArgs e)
     {
-      refaireJeu(); 
+      refairePartie(); 
     }
 
     /// <summary>
     /// Fonction qui recommence le jeu à zéro.
     /// </summary>
-    void refaireJeu()
+    void refairePartie()
     {
       timerDescente.Stop();
       addX = 0;
@@ -305,7 +305,6 @@ namespace TP3
         }
       }
       FonctionsJeu();
-      timerDescente.Start();
     }
     //</alangevin>
     /// <summary>
@@ -387,7 +386,6 @@ namespace TP3
       blocActifX = AssignerPositionFormeX(pieceAleatoire);
       blocActifY = AssignerPositionFormeY(pieceAleatoire);
       VerifierSiPartieTermine();
-      RemplirTableauEtatVide();
     }
 
     /// <summary>
@@ -468,12 +466,18 @@ namespace TP3
     //<ADion>
     private void démarrerLaPartieToolStripMenuItem_Click(object sender, EventArgs e)
     {
+      if (musiqueActive == true)
+      {
+        mediaPlayer.URL = "Resources/background.mp3";
+        mediaPlayer.controls.play();
+      }
       FaireCouleursBlocs();
       timerDescente.Start();
     }
 
-    private void congigToolStripMenuItem_Click(object sender, EventArgs e)
+    private void configurationsToolStripMenuItem_Click(object sender, EventArgs e)
     {
+      refairePartie();
       configs.SpecifierNbLignes(nbLignesJeu);
       configs.SpecifierNbColonnes(nbColonnesJeu);
       if (configs.ShowDialog() == DialogResult.OK)
@@ -482,11 +486,6 @@ namespace TP3
         nbColonnesJeu = configs.ObtenirNbColonnes();
         musiqueActive = configs.MusiqueActive();
         InitialiserSurfaceDeJeu(nbLignesJeu, nbColonnesJeu);
-        if (musiqueActive == true)
-        {
-          mediaPlayer.URL = "Resources/background.mp3";
-          mediaPlayer.controls.play();
-        }
       }
       RemplirTableauEtatVide();
     }
