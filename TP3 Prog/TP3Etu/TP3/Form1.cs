@@ -15,9 +15,8 @@ namespace TP3
     }
     //NEED COMMENTS
     int addX = 0;
-    int addY = 5;
+    int addY = (nbColonnesJeu/2);
     int pieceAleatoire = 0;
-    int timerAction = 0;
     const int nbColonnesJeu = 10;
     const int nbLignesJeu = 20;
     int[,] etatBlocs = new int[nbLignesJeu, nbColonnesJeu];
@@ -104,68 +103,117 @@ namespace TP3
     #endregion
 
 
-  /*bool BlocPeutBouger(KeyPressEventArgs e)
+    bool BlocPeutBouger(KeyPressEventArgs e)
     {
       bool peutBouger = true;
-      if (e == 65)
+      // Descendre
+      if (e.KeyChar == 83 || e.KeyChar == 32 || e.KeyChar == 115)
       {
         for (int i = 0; i < blocActifX.Length; i++)
         {
-          for (int j = 0; j < blocActifY.Length; j++)
+          if ((blocActifX[i] + addX + 1) == nbLignesJeu)
           {
-            if (blocActifX[i] == (int)TypeBloc.Gelé && (blocActifY[j] + 1) == (int)TypeBloc.Gelé || (blocActifY[j] + 1) >= nbLignesJeu)
+            peutBouger = false;
+          }
+          else if (etatBlocs[blocActifX[i] + addX + 1, blocActifY[i] + addY] == (int)TypeBloc.Gelé)
+          {
+            peutBouger = false;
+          }
+        }
+      }
+      // Gauche
+      else if (e.KeyChar == 65 || e.KeyChar == 97)
+      {
+        for (int i = 0; i < blocActifY.Length; i++)
+        {
+          if (blocActifY[i] + addY - 1 < 0)
+          {
+            peutBouger = false;
+          }
+          else if (etatBlocs[blocActifX[i] + addX, blocActifY[i] + addY - 1] == (int)TypeBloc.Gelé)
+          {
+            peutBouger = false;
+          }
+        }
+      }
+      // Droite
+      else if (e.KeyChar == 68 || e.KeyChar == 100)
+      {
+        for (int i = 0; i < blocActifY.Length; i++)
+        {
+          if (blocActifY[i] + addY + 1 > nbColonnesJeu - 1)
+          {
+            peutBouger = false;
+          }
+          else if (etatBlocs[blocActifX[i] + addX, blocActifY[i] + addY + 1] == (int)TypeBloc.Gelé)
+          {
+            peutBouger = false;
+          }
+        }
+      }
+      //<alangevin>
+      // Rotation q
+      else if (e.KeyChar == 81 || e.KeyChar == 113)
+      {
+        int[] temporaireTableauY = new int[4];
+        int[] temporaireTableauX = new int[4];
+        for (int compteur = 0; compteur < blocActifY.Length; compteur++)
+        {
+          temporaireTableauY[compteur] = blocActifX[compteur];
+          temporaireTableauX[compteur] = -blocActifY[compteur];
+        }
+        for (int i = 0; i < blocActifY.Length; i++)
+        {
+          // Vérification des côtés
+          if ((temporaireTableauY[i] + addY) >= nbColonnesJeu || (temporaireTableauY[i] + addY) < 0)
+          {
+            peutBouger = false;
+          }
+          // Vérification haut et bas
+          else if ((temporaireTableauX[i] + addX) >= nbLignesJeu || (temporaireTableauX[i] + addX) <= 0)
+          {
+            peutBouger = false;
+          }
+          // Vérification des blocs gelés
+          else if (etatBlocs[(temporaireTableauX[i] + addX), (temporaireTableauY[i] + addY)] == (int)TypeBloc.Gelé)
+          {
+                peutBouger = false;                       
+          }
+        }
+      }
+      // Rotation e
+      else if (e.KeyChar == 69 || e.KeyChar == 101)
+      {
+        int[] temporaireTableauY = new int[4];
+        int[] temporaireTableauX = new int[4];
+        for (int compteur = 0; compteur < blocActifY.Length; compteur++)
+        {
+          temporaireTableauY[compteur] = -blocActifX[compteur];
+          temporaireTableauX[compteur] = blocActifY[compteur];
+        }
+        for (int i = 0; i < blocActifY.Length; i++)
+        {
+          // Vérification des côtés
+          if ((temporaireTableauY[i] + addY) >= nbColonnesJeu || (temporaireTableauY[i] + addY) < 0)
             {
               peutBouger = false;
             }
-          }
+          // Vérification haut et bas
+          else if ((temporaireTableauX[i] + addX) >= nbLignesJeu || (temporaireTableauX[i] + addX) <= 0)
+            {
+              peutBouger = false;
+            }
+          // Vérification des blocs gelés
+          else if (etatBlocs[(temporaireTableauX[i] + addX), (temporaireTableauY[i] + addY)] == (int)TypeBloc.Gelé)
+            {
+              peutBouger = false;
+            }
         }
       }
-      else if (sens == Deplacement.GAUCHE)
-      {
-        for (int i = 0; i < blocActifX.Length; i++)
-        {
-          if (blocActifX[i] - 1 < 0 || blocActifX[i] - 1 == (int)TypeBloc.Gelé)
-          {
-            peutBouger = false;
-          }
-        }
-      }
-      else if (sens == Deplacement.DROITE)
-      {
-        for(int i = 0; i < blocActifX.Length; i++)
-        {
-          if (blocActifX[i] + 1 >= nbColonnesJeu || blocActifX[i] + 1 == (int)TypeBloc.Gelé)
-          {
-            peutBouger = false;
-          }
-        }
-      }
-      else if(sens == Deplacement.ROTATION_ANTIHORAIRE)
-      {
-        for (int i = 0; i < blocActifY.Length; i++)
-        {
-          blocActifNouveauY[i] = -blocActifX[i];
-          blocActifNouveauX[i] = blocActifY[i];
-          if (blocActifNouveauY[i] == (int)TypeBloc.Gelé || blocActifNouveauX[i] == (int)TypeBloc.Gelé || blocActifNouveauY[i] + 1 >= nbColonnesJeu)
-          {
-            peutBouger = false;
-          }
-        }
-      }
-      else
-      {
-        for (int i = 0; i < blocActifY.Length; i++)
-        {
-          blocActifNouveauY[i] = blocActifX[i];
-          blocActifNouveauX[i] = -blocActifY[i];
-          if (blocActifNouveauY[i] == (int)TypeBloc.Gelé || blocActifNouveauX[i] == (int)TypeBloc.Gelé || (blocActifNouveauY[i] + 1) < 0)
-          {
-            peutBouger = false;
-          }
-        }
-      }
+      //</alangevin>
       return peutBouger;
-    }*/
+      
+    }
     /// <summary>
     /// Permet la sortie de l'application à tout moment.
     /// </summary>
@@ -175,7 +223,7 @@ namespace TP3
     {
       Application.Exit();
     }
-    void RemplirTableauEtat()
+    void RemplirTableauEtatVide()
     {
       for (int compteur = 0; compteur < nbLignesJeu; compteur++)
       {
@@ -185,10 +233,14 @@ namespace TP3
         }
       }
     }
-    void refaireCouleurs()
+    void faireCouleursBlocs()
     {
-      RemplirTableauEtat();
-      etatBlocs[8, 5] = (int)TypeBloc.Gelé;//**************************************************************************************************************
+      RemplirTableauEtatVide();
+      etatBlocs[0, 5] = (int)TypeBloc.Gelé;//**************************************************************************************************************
+      etatBlocs[8, 5] = (int)TypeBloc.Gelé;
+      etatBlocs[8, 4] = (int)TypeBloc.Gelé;
+      etatBlocs[9, 5] = (int)TypeBloc.Gelé;
+      etatBlocs[9, 4] = (int)TypeBloc.Gelé;
       for (int compteur = 0; compteur < 4; compteur++)
       {
         etatBlocs[(blocActifX[compteur] + addX), blocActifY[compteur] + addY] = pieceAleatoire;
@@ -201,23 +253,20 @@ namespace TP3
         }
       }
     }
+
     private void timerDescente_Tick(object sender, EventArgs e)
     {
       for (int compteur = 0; compteur < 4; compteur++)
-      {
-        etatBlocs[(blocActifX[compteur] + addX), blocActifY[compteur] + addY] = (int)TypeBloc.None;
-      }
-
-        addX++;
-      
-      timerAction++;
-      refaireCouleurs();
+        {
+          etatBlocs[(blocActifX[compteur] + addX), blocActifY[compteur] + addY] = (int)TypeBloc.None;
+        }
+      addX++;
+      faireCouleursBlocs();
     }
 
     private void restartToolStripMenuItem_Click(object sender, EventArgs e)
     {
-      refaireJeu();
-      
+      refaireJeu(); 
     }
     /// <summary>
     /// Fonction qui recommence le jeu à zéro.
@@ -226,7 +275,6 @@ namespace TP3
     void refaireJeu()
     {
       timerDescente.Stop();
-      timerAction = 0;
       addX = 0;
       addY = 5;
       pieceAleatoire = 0;
@@ -242,6 +290,7 @@ namespace TP3
       timerDescente.Start();
     }
     //</alangevin>
+
     int[] AssignerPositionFormeX(int pieceAleatoire)
     {
       int[] tableauValeurBlocs;
@@ -258,6 +307,7 @@ namespace TP3
         return tableauValeurBlocs = new int[4] { 0, 0, 0, 0 };
       }
     }
+
     int[] AssignerPositionFormeY(int pieceAleatoire)
     {
       int[] tableauValeurBlocs;
@@ -278,6 +328,7 @@ namespace TP3
         return tableauValeurBlocs = new int[4] { 0, 0, 0, 0 };
       }
     }
+
     int PieceAleatoire()
     {
       Random rnd = new Random();
@@ -287,62 +338,87 @@ namespace TP3
 
     private void tetrisGameCore_KeyPress(object sender, KeyPressEventArgs e)
     {
-      if (e.KeyChar == 65 || e.KeyChar == 97)
-      {
-        addY--;
-        refaireCouleurs();
-      }
-      else if (e.KeyChar == 68 || e.KeyChar == 100)
-      {
-        addY++;
-        refaireCouleurs();
-      }
-      //<alangevin>
-      else if (e.KeyChar == 69 || e.KeyChar == 101)
-      {
-        int[] temporaireTableauY = new int[4];
-        for (int compteur = 0; compteur < blocActifY.Length; compteur++)
-        {
-          temporaireTableauY[compteur] = blocActifY[compteur];
-          blocActifY[compteur] = -blocActifX[compteur];
-        }
-        for (int compteur = 0; compteur < blocActifY.Length; compteur++)
-        {
-          blocActifX[compteur] = temporaireTableauY[compteur];
-        }
-        refaireCouleurs();
-      }
-      else if (e.KeyChar == 81 || e.KeyChar == 113)
-      {
-        int[] temporaireTableauY = new int[4];
-        for (int compteur = 0; compteur < blocActifY.Length; compteur++)
-        {
-          temporaireTableauY[compteur] = -blocActifY[compteur];
-          blocActifY[compteur] = blocActifX[compteur];
-        }
-        for (int compteur = 0; compteur < blocActifY.Length; compteur++)
-        {
-          blocActifX[compteur] = temporaireTableauY[compteur];
-        }
-        refaireCouleurs();
-      }
-      //</alangevin>
-      else if (e.KeyChar == 83 || e.KeyChar == 32 || e.KeyChar == 115)
-      {
-        addX++;
-        refaireCouleurs();
-      }
-      else
-      {
-
-      }
+      MouvementJoueur(e);
     }
+
     void FonctionsJeu ()
     {
       pieceAleatoire = PieceAleatoire();
       blocActifX = AssignerPositionFormeX(pieceAleatoire);
       blocActifY = AssignerPositionFormeY(pieceAleatoire);
-      RemplirTableauEtat();
+      VerifierSiPartieTermine();
+      RemplirTableauEtatVide();
+    }
+
+    void MouvementJoueur(KeyPressEventArgs e)
+    {
+      bool reponseBouger = true;
+      reponseBouger = BlocPeutBouger(e);
+      if (reponseBouger == true)
+      {
+        //Gauche
+        if (e.KeyChar == 65 || e.KeyChar == 97)
+        {
+          addY--;
+          faireCouleursBlocs();
+        }
+        //Droite
+        else if (e.KeyChar == 68 || e.KeyChar == 100)
+        {
+          addY++;
+          faireCouleursBlocs();
+        }
+        //<alangevin>
+        //Tourne e
+        else if (e.KeyChar == 69 || e.KeyChar == 101)
+        {
+          int[] temporaireTableauY = new int[4];
+          for (int compteur = 0; compteur < blocActifY.Length; compteur++)
+          {
+            temporaireTableauY[compteur] = blocActifY[compteur];
+          }
+          for (int compteur = 0; compteur < blocActifY.Length; compteur++)
+          {
+            blocActifY[compteur] = -blocActifX[compteur];
+            blocActifX[compteur] = temporaireTableauY[compteur];
+          }
+          faireCouleursBlocs();
+        }
+        //Tourne q
+        else if (e.KeyChar == 81 || e.KeyChar == 113)
+        {
+          int[] temporaireTableauY = new int[4];
+          for (int compteur = 0; compteur < blocActifY.Length; compteur++)
+          {
+            temporaireTableauY[compteur] = -blocActifY[compteur];
+          }
+          for (int compteur = 0; compteur < blocActifY.Length; compteur++)
+          {
+            blocActifY[compteur] = blocActifX[compteur];
+            blocActifX[compteur] = temporaireTableauY[compteur];
+          }
+          faireCouleursBlocs();
+        }
+        //</alangevin>
+        //Descendre
+        else if (e.KeyChar == 83 || e.KeyChar == 32 || e.KeyChar == 115)
+        {
+          addX++;
+          faireCouleursBlocs();
+        }
+        else
+        {
+          faireCouleursBlocs();
+        }
+      }
+    }
+    void VerifierSiPartieTermine ()
+    {
+      for (int i = 0; i < blocActifX.Length; i++)
+        if (etatBlocs[(blocActifX[i] + addX), (blocActifY[i] + addY)] != (int)TypeBloc.None) 
+        {
+          timerDescente.Stop();
+        }
     }
   }
   
