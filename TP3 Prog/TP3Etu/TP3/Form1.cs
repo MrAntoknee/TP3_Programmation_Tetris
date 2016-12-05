@@ -11,11 +11,14 @@ namespace TP3
   public partial class tetrisGameCore : Form
   {
     private frmConfigurations configs;
-    public tetrisGameCore( )
+    private FinDePartie fin;
+    int tempsPartie = 0;
+    public tetrisGameCore()
     {
       InitializeComponent();
       timerDescente.Stop();
       FonctionsJeu();
+      VerifierSiPartieTermine();
     }
     //NEED COMMENTS
     int nbColonnesJeu = 10;
@@ -27,6 +30,7 @@ namespace TP3
     int[,] etatBlocs = null;
     int[] blocActifX = null;
     int[] blocActifY = null;
+    public float[] nbrBlocsDifferent = new float[9];
     Color[] toutesLesCouleurs = new Color[] { Color.Black, Color.Gray, Color.Red, Color.Teal, Color.Teal };
     // Variable nécessaire pour jouer le son
     WindowsMediaPlayer mediaPlayer = new WindowsMediaPlayer();
@@ -35,14 +39,14 @@ namespace TP3
 
     // Représentation visuelles du jeu en mémoire.
     PictureBox[,] toutesImagesVisuelles = null;
-    
+
     /// <summary>
     /// Gestionnaire de l'événement se produisant lors du premier affichage 
     /// du formulaire principal.
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    private void frmLoad( object sender, EventArgs e )
+    private void frmLoad(object sender, EventArgs e)
     {
       ExecuterTestsUnitaires();
       configs = new frmConfigurations();
@@ -89,7 +93,7 @@ namespace TP3
     /// Faites ici les appels requis pour vos tests unitaires.
     /// </summary>
     void ExecuterTestsUnitaires()
-    {      
+    {
       ExecuterTestABC();
       // A compléter...
     }
@@ -98,11 +102,11 @@ namespace TP3
     void ExecuterTestABC()
     {
       // Mise en place des données du test
-      
+
       // Exécuter de la méthode à tester
-      
+
       // Validation des résultats
-      
+
       // Clean-up
     }
 
@@ -184,7 +188,7 @@ namespace TP3
           // Vérification des blocs gelés
           else if (etatBlocs[(temporaireTableauX[i] + addX), (temporaireTableauY[i] + addY)] == (int)TypeBloc.Gelé)
           {
-                peutBouger = false;                       
+            peutBouger = false;
           }
         }
       }
@@ -202,24 +206,24 @@ namespace TP3
         {
           // Vérification des côtés du tableau
           if ((temporaireTableauY[i] + addY) >= nbColonnesJeu || (temporaireTableauY[i] + addY) < 0)
-            {
-              peutBouger = false;
-            }
+          {
+            peutBouger = false;
+          }
           // Vérification haut et bas du tableau
           else if ((temporaireTableauX[i] + addX) >= nbLignesJeu || (temporaireTableauX[i] + addX) <= 0)
-            {
-              peutBouger = false;
-            }
+          {
+            peutBouger = false;
+          }
           // Vérification des blocs gelés
           else if (etatBlocs[(temporaireTableauX[i] + addX), (temporaireTableauY[i] + addY)] == (int)TypeBloc.Gelé)
-            {
-              peutBouger = false;
-            }
+          {
+            peutBouger = false;
+          }
         }
       }
       //</alangevin>
       return peutBouger;
-      
+
     }
     /// <summary>
     /// Permet la sortie de l'application à tout moment.
@@ -258,7 +262,7 @@ namespace TP3
       {
         for (int compteur2 = 0; compteur2 < nbColonnesJeu; compteur2++)
         {
-          toutesImagesVisuelles[compteur,compteur2].BackColor = toutesLesCouleurs[etatBlocs[compteur, compteur2]];
+          toutesImagesVisuelles[compteur, compteur2].BackColor = toutesLesCouleurs[etatBlocs[compteur, compteur2]];
         }
       }
     }
@@ -270,9 +274,9 @@ namespace TP3
     private void timerDescente_Tick(object sender, EventArgs e)
     {
       for (int compteur = 0; compteur < 4; compteur++)
-        {
-          etatBlocs[(blocActifX[compteur] + addX), blocActifY[compteur] + addY] = (int)TypeBloc.None;
-        }
+      {
+        etatBlocs[(blocActifX[compteur] + addX), blocActifY[compteur] + addY] = (int)TypeBloc.None;
+      }
       addX++;
       FaireCouleursBlocs();
     }
@@ -284,18 +288,19 @@ namespace TP3
     //<alangevin>
     private void restartToolStripMenuItem_Click(object sender, EventArgs e)
     {
-      refairePartie(); 
+      RefairePartie();
     }
 
     /// <summary>
     /// Fonction qui recommence le jeu à zéro.
     /// </summary>
-    void refairePartie()
+    void RefairePartie()
     {
       timerDescente.Stop();
       addX = 0;
       addY = 5;
       pieceAleatoire = 0;
+      mediaPlayer.controls.stop();
       for (int compteur = 0; compteur < nbLignesJeu; compteur++)
       {
         for (int compteur2 = 0; compteur2 < nbColonnesJeu; compteur2++)
@@ -317,13 +322,13 @@ namespace TP3
       int[] tableauValeurBlocs;
       if (pieceAleatoire == (int)TypeBloc.Carré)
       {
-       return tableauValeurBlocs = new int[4] { 0, 1, 0, 1 };
+        return tableauValeurBlocs = new int[4] { 0, 1, 0, 1 };
       }
       else if (pieceAleatoire == (int)TypeBloc.Ligne)
       {
         return tableauValeurBlocs = new int[4] { 0, 1, 2, 3 };
       }
-      else 
+      else
       {
         return tableauValeurBlocs = new int[4] { 0, 0, 0, 0 };
       }
@@ -345,7 +350,7 @@ namespace TP3
       {
         return tableauValeurBlocs = new int[4] { 0, 0, 0, 0 };
       }
-      else if(pieceAleatoire == (int)TypeBloc.LigneVerticale)
+      else if (pieceAleatoire == (int)TypeBloc.LigneVerticale)
       {
         return tableauValeurBlocs = new int[4] { 0, 1, 2, 3 };
       }
@@ -362,7 +367,7 @@ namespace TP3
     int PieceAleatoire()
     {
       Random rnd = new Random();
-      int blocAleatoire = rnd.Next(2,5);
+      int blocAleatoire = rnd.Next(2, 5);
       return blocAleatoire;
     }
 
@@ -379,13 +384,14 @@ namespace TP3
     /// <summary>
     /// Fonction qui appelle toute les fonctions nécessaire au fonctionnement du jeu
     /// </summary>
-    void FonctionsJeu ()
+    void FonctionsJeu()
     {
       addY = (nbColonnesJeu / 2);
       pieceAleatoire = PieceAleatoire();
+      nbrBlocsDifferent[pieceAleatoire-2]++;
+      nbrBlocsDifferent[8]++;
       blocActifX = AssignerPositionFormeX(pieceAleatoire);
       blocActifY = AssignerPositionFormeY(pieceAleatoire);
-      VerifierSiPartieTermine();
     }
 
     /// <summary>
@@ -455,13 +461,23 @@ namespace TP3
       }
     }
     /// <summary>
-    /// 
+    /// Fonction qui 
     /// </summary>
-    void VerifierSiPartieTermine ()
+    /// <returns></returns>
+    void VerifierSiPartieTermine()
     {
-      pieceAleatoire = PieceAleatoire();
-      blocActifX = AssignerPositionFormeX(pieceAleatoire);
-      blocActifY = AssignerPositionFormeY(pieceAleatoire);
+      for (int i = 0; i < blocActifX.Length-1; i++)
+      {
+       // if (etatBlocs[blocActifX[i] + addX, blocActifY[i] + addY] == (int)TypeBloc.Gelé)
+        {
+          fin = new FinDePartie();
+          fin.TempsDeJeu(tempsPartie);
+          fin.SpecifierNbPiece(nbrBlocsDifferent);
+          fin.ShowDialog();
+          break;
+        }
+      }
+
     }
     //<ADion>
     private void démarrerLaPartieToolStripMenuItem_Click(object sender, EventArgs e)
@@ -477,7 +493,7 @@ namespace TP3
 
     private void configurationsToolStripMenuItem_Click(object sender, EventArgs e)
     {
-      refairePartie();
+      RefairePartie();
       configs.SpecifierNbLignes(nbLignesJeu);
       configs.SpecifierNbColonnes(nbColonnesJeu);
       if (configs.ShowDialog() == DialogResult.OK)
@@ -489,6 +505,12 @@ namespace TP3
       }
       RemplirTableauEtatVide();
     }
+
+    private void tempsDeJeu_Tick(object sender, EventArgs e)
+    {
+      tempsPartie++;
+    }
     //</ADion>
+
   }
 }

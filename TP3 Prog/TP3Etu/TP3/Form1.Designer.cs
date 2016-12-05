@@ -37,6 +37,7 @@
       this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.configurationsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.timerDescente = new System.Windows.Forms.Timer(this.components);
+      this.tempsDeJeu = new System.Windows.Forms.Timer(this.components);
       this.menuStrip1.SuspendLayout();
       this.SuspendLayout();
       // 
@@ -62,7 +63,7 @@
       this.tableauJeu.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 29F));
       this.tableauJeu.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 25F));
       this.tableauJeu.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 36F));
-      this.tableauJeu.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 35F));
+      this.tableauJeu.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 45F));
       this.tableauJeu.Location = new System.Drawing.Point(349, 30);
       this.tableauJeu.Margin = new System.Windows.Forms.Padding(0);
       this.tableauJeu.Name = "tableauJeu";
@@ -157,6 +158,12 @@
       this.timerDescente.Interval = 1000;
       this.timerDescente.Tick += new System.EventHandler(this.timerDescente_Tick);
       // 
+      // tempsDeJeu
+      // 
+      this.tempsDeJeu.Enabled = true;
+      this.tempsDeJeu.Interval = 1000;
+      this.tempsDeJeu.Tick += new System.EventHandler(this.tempsDeJeu_Tick);
+      // 
       // tetrisGameCore
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -166,7 +173,7 @@
       this.Controls.Add(this.menuStrip1);
       this.KeyPreview = true;
       this.MainMenuStrip = this.menuStrip1;
-      this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+      this.Margin = new System.Windows.Forms.Padding(4);
       this.Name = "tetrisGameCore";
       this.Text = "Titris";
       this.Load += new System.EventHandler(this.frmLoad);
@@ -188,6 +195,7 @@
     private System.Windows.Forms.ToolStripMenuItem restartToolStripMenuItem;
     private System.Windows.Forms.ToolStripMenuItem démarrerLaPartieToolStripMenuItem;
     private System.Windows.Forms.ToolStripMenuItem configurationsToolStripMenuItem;
+    private System.Windows.Forms.Timer tempsDeJeu;
   }
 }
 

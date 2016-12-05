@@ -63,3 +63,4 @@ C:\Users\Utilisateur\Desktop\TP3__PROG - Copie\TP3_Programmation_Tetris\TP3 Prog
 C:\Users\Utilisateur\Desktop\TP3__PROG - Copie\TP3_Programmation_Tetris\TP3 Prog\TP3Etu\TP3\obj\Debug\TP3.Properties.Resources.resources
 C:\Users\Utilisateur\Desktop\TP3__PROG - Copie\TP3_Programmation_Tetris\TP3 Prog\TP3Etu\TP3\obj\Debug\TP3.csproj.GenerateResource.Cache
 C:\Users\Utilisateur\Desktop\TP3__PROG - Copie\TP3_Programmation_Tetris\TP3 Prog\TP3Etu\TP3\bin\Debug\Resources\background.mp3
+C:\Users\Utilisateur\Desktop\TP3__PROG - Copie\TP3_Programmation_Tetris\TP3 Prog\TP3Etu\TP3\obj\Debug\TP3.FinDePartie.resources
