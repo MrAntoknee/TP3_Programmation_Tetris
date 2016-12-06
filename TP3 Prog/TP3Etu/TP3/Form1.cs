@@ -37,7 +37,7 @@ namespace TP3
     int[] blocActifX = null;
     //Tableau qui compte combien de pièce différente il y a eu au cours de la partie
     public float[] nbrBlocsDifferent = new float[9];
-    Color[] toutesLesCouleurs = new Color[] { Color.Black, Color.Gray, Color.Red, Color.Teal, Color.Teal };
+    Color[] toutesLesCouleurs = new Color[] { Color.Black, Color.Gray, Color.Red, Color.Teal, Color.Teal, Color.OrangeRed, Color.Orchid, Color.Chartreuse, Color.DarkSlateGray, Color.HotPink };
     // Variable nécessaire pour jouer le son
     WindowsMediaPlayer mediaPlayer = new WindowsMediaPlayer();
 
@@ -437,6 +437,7 @@ namespace TP3
     /// </summary>
     void FaireCouleursBlocs()
     {
+      PartieTermine();
       RemplirTableauEtatVide();
       for (int compteur = 0; compteur < 4; compteur++)
       {
@@ -488,6 +489,10 @@ namespace TP3
       addX = 5;
       pieceAleatoire = 0;
       mediaPlayer.controls.stop();
+      for (int compteur = 0; compteur < nbrBlocsDifferent.Length; compteur++)
+      {
+        nbrBlocsDifferent[compteur] = 0;    
+      }
       for (int compteur = 0; compteur < nbLignesJeu; compteur++)
       {
         for (int compteur2 = 0; compteur2 < nbColonnesJeu; compteur2++)
@@ -516,6 +521,26 @@ namespace TP3
       {
         return tableauValeurBlocs = new int[4] { 0, 1, 2, 3 };
       }
+      else if (pieceAleatoire == (int)TypeBloc.T)
+      {
+        return tableauValeurBlocs = new int[4] { 0, 1, 1, 2 };
+      }
+      else if (pieceAleatoire == (int)TypeBloc.L)
+      {
+        return tableauValeurBlocs = new int[4] { 0, 0, 1, 2 };
+      }
+      else if (pieceAleatoire == (int)TypeBloc.J)
+      {
+        return tableauValeurBlocs = new int[4] { 0, 1, 0, 2 };
+      }
+      else if (pieceAleatoire == (int)TypeBloc.S)
+      {
+        return tableauValeurBlocs = new int[4] { 0, 1, 1, 2 };
+      }
+      else if (pieceAleatoire == (int)TypeBloc.Z)
+      {
+        return tableauValeurBlocs = new int[4] { 0, 0, 1, 1 };
+      }
       else
       {
         return tableauValeurBlocs = new int[4] { 0, 0, 0, 0 };
@@ -542,6 +567,26 @@ namespace TP3
       {
         return tableauValeurBlocs = new int[4] { 0, 1, 2, 3 };
       }
+      else if (pieceAleatoire == (int)TypeBloc.T)
+      {
+        return tableauValeurBlocs = new int[4] { 0, 0, 1, 0 };
+      }
+      else if (pieceAleatoire == (int)TypeBloc.L)
+      {
+        return tableauValeurBlocs = new int[4] { 0, 1, 0, 0 };
+      }
+      else if (pieceAleatoire == (int)TypeBloc.J)
+      {
+        return tableauValeurBlocs = new int[4] { 0, 1, 1, 1 };
+      }
+      else if (pieceAleatoire == (int)TypeBloc.S)
+      {
+        return tableauValeurBlocs = new int[4] { 0, 0, 1, 1 };
+      }
+      else if (pieceAleatoire == (int)TypeBloc.Z)
+      {
+        return tableauValeurBlocs = new int[4] { 0, 1, 1, 2 };
+      }
       else
       {
         return tableauValeurBlocs = new int[4] { 0, 0, 0, 0 };
@@ -555,7 +600,7 @@ namespace TP3
     int PieceAleatoire()
     {
       Random rnd = new Random();
-      int blocAleatoire = rnd.Next(2, 5);
+      int blocAleatoire = rnd.Next(2,10);
       return blocAleatoire;
     }
 
