@@ -86,8 +86,13 @@
       this.tableauJeu.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 22F));
       this.tableauJeu.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 19F));
       this.tableauJeu.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 27F));
-      this.tableauJeu.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 37F));
-      this.tableauJeu.Location = new System.Drawing.Point(262, 24);
+      this.tableauJeu.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 27F));
+      this.tableauJeu.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 25F));
+      this.tableauJeu.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 29F));
+      this.tableauJeu.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 25F));
+      this.tableauJeu.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 36F));
+      this.tableauJeu.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 45F));
+      this.tableauJeu.Location = new System.Drawing.Point(349, 30);
       this.tableauJeu.Margin = new System.Windows.Forms.Padding(0);
       this.tableauJeu.Name = "tableauJeu";
       this.tableauJeu.RowCount = 30;
@@ -181,6 +186,12 @@
       this.timerDescente.Interval = 1000;
       this.timerDescente.Tick += new System.EventHandler(this.timerDescente_Tick);
       // 
+// tempsDeJeu
+      // 
+      this.tempsDeJeu.Enabled = true;
+      this.tempsDeJeu.Interval = 1000;
+      this.tempsDeJeu.Tick += new System.EventHandler(this.tempsDeJeu_Tick);
+      //
       // lblPointageTexte
       // 
       this.lblPointageTexte.AutoSize = true;
@@ -432,6 +443,7 @@
       this.Controls.Add(this.menuStrip1);
       this.KeyPreview = true;
       this.MainMenuStrip = this.menuStrip1;
+      this.Margin = new System.Windows.Forms.Padding(4);
       this.Name = "tetrisGameCore";
       this.Text = "Titris";
       this.Load += new System.EventHandler(this.frmLoad);
@@ -457,6 +469,8 @@
     private System.Windows.Forms.ToolStripMenuItem restartToolStripMenuItem;
     private System.Windows.Forms.ToolStripMenuItem démarrerLaPartieToolStripMenuItem;
     private System.Windows.Forms.ToolStripMenuItem configurationsToolStripMenuItem;
+
+    private System.Windows.Forms.Timer tempsDeJeu;
     private System.Windows.Forms.Label lblPointageTexte;
     private System.Windows.Forms.Label lblPointage;
     private System.Windows.Forms.Label label1;

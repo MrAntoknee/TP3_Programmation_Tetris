@@ -63,6 +63,7 @@ C:\Users\Utilisateur\Desktop\TP3__PROG - Copie\TP3_Programmation_Tetris\TP3 Prog
 C:\Users\Utilisateur\Desktop\TP3__PROG - Copie\TP3_Programmation_Tetris\TP3 Prog\TP3Etu\TP3\obj\Debug\TP3.Properties.Resources.resources
 C:\Users\Utilisateur\Desktop\TP3__PROG - Copie\TP3_Programmation_Tetris\TP3 Prog\TP3Etu\TP3\obj\Debug\TP3.csproj.GenerateResource.Cache
 C:\Users\Utilisateur\Desktop\TP3__PROG - Copie\TP3_Programmation_Tetris\TP3 Prog\TP3Etu\TP3\bin\Debug\Resources\background.mp3
+<<<<<<< HEAD
 C:\Users\Alex\Desktop\TP3_Programmation_Tetris\TP3 Prog\TP3Etu\TP3\bin\Debug\TP3.exe.config
 C:\Users\Alex\Desktop\TP3_Programmation_Tetris\TP3 Prog\TP3Etu\TP3\obj\Debug\Interop.WMPLib.dll
 C:\Users\Alex\Desktop\TP3_Programmation_Tetris\TP3 Prog\TP3Etu\TP3\obj\Debug\TP3.csproj.ResolveComReference.cache
@@ -76,3 +77,6 @@ C:\Users\Alex\Desktop\TP3_Programmation_Tetris\TP3 Prog\TP3Etu\TP3\bin\Debug\Res
 C:\Users\Alex\Desktop\TP3_Programmation_Tetris\TP3 Prog\TP3Etu\TP3\bin\Debug\TP3.exe
 C:\Users\Alex\Desktop\TP3_Programmation_Tetris\TP3 Prog\TP3Etu\TP3\bin\Debug\TP3.pdb
 C:\Users\Alex\Desktop\TP3_Programmation_Tetris\TP3 Prog\TP3Etu\TP3\obj\Debug\TP3.tetrisGameCore.resources
+=======
+C:\Users\Utilisateur\Desktop\TP3__PROG - Copie\TP3_Programmation_Tetris\TP3 Prog\TP3Etu\TP3\obj\Debug\TP3.FinDePartie.resources
+>>>>>>> c11c74b94ee1210584f71f70440de1b8c4d28542

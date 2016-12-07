@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 using WMPLib;
+using System.Diagnostics;
 
 
 namespace TP3
@@ -15,6 +16,10 @@ namespace TP3
   {
     // Déclare un lien entre la forme de configuration et la forme principale
     private frmConfigurations configs;
+    private FinDePartie fin;
+    //Temps total de la partie
+    int tempsPartie = 0;
+
     public tetrisGameCore()
     {
       InitializeComponent();
@@ -31,7 +36,7 @@ namespace TP3
     // Variables qui permettent d'avoir l'emplacement courant du bloc actif
     int addY = 0;
     int addX = 0;
-    // Variable qui va choisir un bloc aléatoirement
+    //Représente lenuméro de la pièce qui est joué
     int pieceAleatoire = 0;
     // Booléen qui affirme si la musique est activée ou non (Désactivée par défaut)
     bool musiqueActive = false;
@@ -40,8 +45,10 @@ namespace TP3
     // Tableaux contenant les blocs partagés, tailles déclarées dans la fonction "FonctionsJeu"
     int[] blocActifY = null;
     int[] blocActifX = null;
+    //Tableau qui compte combien de pièce différente il y a eu au cours de la partie
+    public float[] nbrBlocsDifferent = new float[9];
     // Tableau qui correspond à toutes les couleurs des états
-    Color[] toutesLesCouleurs = new Color[] { Color.Black, Color.Gray, Color.Red, Color.Teal, Color.Teal, Color.Azure, Color.DeepPink, Color.DarkOrange, Color.Turquoise, Color.Yellow };
+    Color[] toutesLesCouleurs = new Color[] { Color.Black, Color.Gray, Color.Red, Color.Teal, Color.Teal, Color.OrangeRed, Color.Orchid, Color.Chartreuse, Color.DarkSlateGray, Color.HotPink };
     // Variable nécessaire pour jouer le son
     WindowsMediaPlayer mediaPlayer = new WindowsMediaPlayer();
     // Variable qui correspond à la dernière ligne qui va être décalée
@@ -105,6 +112,7 @@ namespace TP3
         }
       }
     }
+
     #endregion
 
 
@@ -114,7 +122,14 @@ namespace TP3
     /// Exécute tous les tests unitaires présents
     /// </summary>
     void ExecuterTestsUnitaires()
+    {      
     {
+      TestRotationHoraireCentre();
+      TestRotationHoraireGauche();
+      TestRotationHoraireDroite();
+      TestRotationHoraireCentreAvecBlocs();
+      TestFinDePartie();
+      TestContinuerPartie();
       ExecuterTest_LigneCompleteEtSeule();
       ExecuterTest_LigneCompleteEtDecalage();
       ExecuterTest_DeuxLignesCompletesConsecutives();
@@ -124,8 +139,185 @@ namespace TP3
       // Réinitialise le pointage pour le jeu
       pointage = 0;
     }
+    //<alangevin>
+    /// <summary>
+    /// Fonction qui test la rotation horaire d'une pièce au centre du tableau
+    /// </summary>
+    void TestRotationHoraireCentre()
+    {
+      // Mise en place des données du test
+      Deplacement sens = Deplacement.ROTATION_HORAIRE;
+      blocActifY = AssignerPositionFormeY(2);
+      blocActifX = AssignerPositionFormeX(2);
+      addX = 5;
+      addY = 10;
+      bool testReponse;
 
-    // <ADion>
+      InitialiserSurfaceDeJeu(nbLignesJeu, nbColonnesJeu);
+      for (int i = 0; i < blocActifY.Length; i++)
+      {
+        etatBlocs[(blocActifY[i] + addY), blocActifX[i] + addX] = (int)TypeBloc.Carré;
+      }
+      // Exécuter de la méthode à tester
+      testReponse = BlocPeutBouger(sens);
+      // Validation des résultats
+        Debug.Assert(testReponse == true);
+      // Clean-up
+      RefairePartie();
+    }
+
+    /// <summary>
+    /// Fonction qui test la rotation horaire d'une pièce à gauche du tableau
+    /// </summary>
+    void TestRotationHoraireGauche()
+    {
+      // Mise en place des données du test
+      Deplacement sens = Deplacement.ROTATION_HORAIRE;
+      blocActifY = AssignerPositionFormeY(2);
+      blocActifX = AssignerPositionFormeX(2);
+      addX = 0;
+      addY = 10;
+      bool testReponse;
+
+      InitialiserSurfaceDeJeu(nbLignesJeu, nbColonnesJeu);
+      for (int i = 0; i < blocActifY.Length; i++)
+      {
+        etatBlocs[(blocActifY[i] + addY), blocActifX[i] + addX] = (int)TypeBloc.Carré;
+      }
+      // Exécuter de la méthode à tester
+      testReponse = BlocPeutBouger(sens);
+      // Validation des résultats
+        Debug.Assert(testReponse == false);
+
+      // Clean-up
+      RefairePartie();
+    }
+
+    /// <summary>
+    /// Fonction qui teste la rotation horaire d'une pièce à droite du tableau
+    /// </summary>
+    void TestRotationHoraireDroite()
+    {
+      // Mise en place des données du test
+      Deplacement sens = Deplacement.ROTATION_HORAIRE;
+      int[] blocY = AssignerPositionFormeY(2);
+      int[] blocX = AssignerPositionFormeX(2);
+      addX = 8;
+      addY = 10;
+      bool testReponse;
+
+      InitialiserSurfaceDeJeu(nbLignesJeu, nbColonnesJeu);
+      for (int i = 0; i < blocY.Length - 1; i++)
+      {
+        etatBlocs[(blocY[i] + addY), blocX[i] + addX] = (int)TypeBloc.Carré;
+      }
+      // Exécuter de la méthode à tester
+
+      testReponse = BlocPeutBouger(sens);
+      // Validation des résultats
+
+      Debug.Assert(testReponse == true);
+
+      // Clean-up
+      RefairePartie();
+    }
+    /// <summary>
+    /// Fonction qui test la rotation horaire d'une pièce au centre du tableau, mais avec des blocs gelés autour
+    /// </summary>
+    void TestRotationHoraireCentreAvecBlocs()
+    {
+      // Mise en place des données du test
+      Deplacement sens = Deplacement.ROTATION_HORAIRE;
+      blocActifY = AssignerPositionFormeY(2);
+      blocActifX = AssignerPositionFormeX(2);
+      addX = 5;
+      addY = 10;
+      bool testReponse;
+
+      InitialiserSurfaceDeJeu(nbLignesJeu, nbColonnesJeu);
+      for (int i = 0; i < blocActifY.Length; i++)
+      {
+        etatBlocs[(blocActifY[i] + addY), blocActifX[i] + addX] = (int)TypeBloc.Carré;
+      }
+      etatBlocs[9, 5] = (int)TypeBloc.Gelé;
+      etatBlocs[9, 6] = (int)TypeBloc.Gelé;
+      etatBlocs[10, 4] = (int)TypeBloc.Gelé;
+      etatBlocs[10, 7] = (int)TypeBloc.Gelé;
+      etatBlocs[11, 4] = (int)TypeBloc.Gelé;
+      etatBlocs[11, 7] = (int)TypeBloc.Gelé;
+      etatBlocs[12, 5] = (int)TypeBloc.Gelé;
+      etatBlocs[12, 6] = (int)TypeBloc.Gelé;
+      // Exécuter de la méthode à tester
+      testReponse = BlocPeutBouger(sens);
+      // Validation des résultats
+
+      Debug.Assert(testReponse == false);
+
+      // Clean-up
+      RefairePartie();
+    }
+    /// <summary>
+    /// Fonction qui test si la fin de partie fonctionne correctement lorsqu'il y en a une
+    /// </summary>
+    void TestFinDePartie()
+    {
+
+      // Mise en place des données du test
+      blocActifY = AssignerPositionFormeY(2);
+      blocActifX = AssignerPositionFormeX(2);
+      addX = 5;
+      addY = 0;
+      bool testPartieTermine;
+
+      InitialiserSurfaceDeJeu(nbLignesJeu, nbColonnesJeu);
+      for (int i = 0; i < blocActifY.Length; i++)
+      {
+        etatBlocs[(blocActifY[i] + addY), blocActifX[i] + addX] = (int)TypeBloc.Carré;
+      }
+      etatBlocs[0, 5] = (int)TypeBloc.Gelé;
+
+      // Exécuter de la méthode à tester
+      testPartieTermine = VerifierSiPartieTermine();
+      // Validation des résultats
+
+      Debug.Assert(testPartieTermine == true);
+
+      // Clean-up
+      RefairePartie();
+    }
+
+    /// <summary>
+    /// Fonction qui test si la fin de partie fonctionne correctement lorsque le jeu doit continuer
+    /// </summary>
+    void TestContinuerPartie()
+    {
+
+      // Mise en place des données du test
+      blocActifY = AssignerPositionFormeY(2);
+      blocActifX = AssignerPositionFormeX(2);
+      addX = 0;
+      addY = 0;
+      bool testPartieTermine;
+
+      InitialiserSurfaceDeJeu(nbLignesJeu, nbColonnesJeu);
+      for (int i = 0; i < blocActifY.Length; i++)
+      {
+        etatBlocs[(blocActifY[i] + addY), blocActifX[i] + addX] = (int)TypeBloc.Carré;
+      }
+      etatBlocs[0, 5] = (int)TypeBloc.Gelé;
+
+      // Exécuter de la méthode à tester
+      testPartieTermine = VerifierSiPartieTermine();
+      // Validation des résultats
+
+      Debug.Assert(testPartieTermine == false);
+
+      // Clean-up
+      RefairePartie();
+    }
+    //</alangevin>
+
+    //<ADion>
 
     /// <summary>
     /// Exécute un test unitaire qui confirme si la ligne complète de blocs gelés a été
@@ -135,13 +327,16 @@ namespace TP3
     void ExecuterTest_LigneCompleteEtSeule()
     {
       // Mise en place des données du test
+      
       for (int i = 0; i < nbColonnesJeu; i++)
       {
         etatBlocs[nbLignesJeu - 1, i] = (int)TypeBloc.Gelé;
       }
       // Exécuter de la méthode à tester
+      
       RetirerLignes();
       // Validation des résultats
+      
       for (int i = 0; i < nbColonnesJeu; i++)
       {
         Debug.Assert(etatBlocs[nbLignesJeu - 1, i] == (int)TypeBloc.None, "Erreur lors du retirement de la ligne de blocs gelés");
@@ -162,7 +357,6 @@ namespace TP3
       {
         etatBlocs[nbLignesJeu - 1, i] = (int)TypeBloc.Gelé;
       }
-
       for (int i = 0; i < nbColonnesJeu; i++)
       {
         etatBlocs[nbLignesJeu - 1, i] = (int)TypeBloc.Gelé;
@@ -205,6 +399,9 @@ namespace TP3
       RefairePartie();
     }
 
+    /// <summary>
+    /// Exécute un test unitaire qui confirme si deux lignes non consécutives ont été retirées et décalées
+    /// </summary>
     void ExecuterTest_DeuxLignesCompletesNonConsecutives()
     {
       // Mise en place des données du test
@@ -231,6 +428,9 @@ namespace TP3
       RefairePartie();
     }
 
+    /// <summary>
+    /// Exécute un test unitaire qui confirme si trois lignes consécutives ont été retirées et décalées
+    /// </summary>
     void ExecuterTest_TroisLignesCompletesConsecutives()
     {
       // Mise en place des données du test
@@ -255,6 +455,9 @@ namespace TP3
       RefairePartie();
     }
 
+    /// <summary>
+    /// Exécute un test unitaire qui confirme si quatre lignes consécutives ont été retirées et décalées
+    /// </summary>
     void ExecuterTest_QuatreLignesCompletesConsecutives()
     {
       // Mise en place des données du test
@@ -281,20 +484,20 @@ namespace TP3
 
     // </ADion>
 
+
     /// <summary>
-    /// Confirme que le bloc peut bouger lorsque le joueur appuie sur une touche en particulier
+    /// Fonction qui vérifie si la pièce peut effectuer le mouvement attendu
     /// </summary>
-    /// <param name="e"></param>
-    /// <returns>Retourne un booléen qui spécifie si le bloc peut bouger ou non</returns>
-    bool BlocPeutBouger(KeyPressEventArgs e)
+    /// <param name="sens"></param>
+    /// <returns>Retourne un booléen qui affirme ou non si la pièce peut bouger</returns>
+    bool BlocPeutBouger(Deplacement sens)
     {
       bool peutBouger = true;
 
       //<ADion>
 
       //Vérification, bouger la pièce vers le bas
-      // KeyChar == 83 correspond à 'S', KeyChar == 32 correspond à la barre d'espace et KeyChar == 115 correspond à 's'
-      if (e.KeyChar == 83 || e.KeyChar == 32 || e.KeyChar == 115)
+      if (sens == Deplacement.DESCENTE)
       {
         for (int i = 0; i < blocActifY.Length; i++)
         {
@@ -309,8 +512,7 @@ namespace TP3
         }
       }
       //Vérification, bouger la pièce vers la gauche
-      // KeyChar == 65 correspond à 'A' et KeyChar == 97 correspond à 'a'
-      else if (e.KeyChar == 65 || e.KeyChar == 97)
+      else if (sens == Deplacement.GAUCHE)
       {
         for (int i = 0; i < blocActifX.Length; i++)
         {
@@ -325,8 +527,7 @@ namespace TP3
         }
       }
       //Vérification, bouger la pièce vers la droite
-      // KeyChar == 68 correspond à 'D' et KeyChar == 100 correspond à 'd'
-      else if (e.KeyChar == 68 || e.KeyChar == 100)
+      else if (sens == Deplacement.DROITE)
       {
         for (int i = 0; i < blocActifX.Length; i++)
         {
@@ -346,11 +547,10 @@ namespace TP3
       //<alangevin>
 
       // Vérification, bouger la pièce du sens anti-horaire
-      // KeyChar == 81 correspond à 'Q' et KeyChar == 113 correspond à 'q'
-      else if (e.KeyChar == 81 || e.KeyChar == 113)
+      else if (sens == Deplacement.ROTATION_ANTIHORAIRE)
       {
-        int[] temporaireTableauY = new int[4];
         int[] temporaireTableauX = new int[4];
+        int[] temporaireTableauY = new int[4];
         for (int compteur = 0; compteur < blocActifX.Length; compteur++)
         {
           temporaireTableauY[compteur] = blocActifY[compteur];
@@ -364,23 +564,22 @@ namespace TP3
             peutBouger = false;
           }
           // Vérification haut et bas du tableau
-          else if ((temporaireTableauX[i] + addY) >= nbLignesJeu || (temporaireTableauX[i] + addY) <= 0)
+          else if ((temporaireTableauX[i] + addY) >= nbLignesJeu || (temporaireTableauX[i] + addY) < 0)
           {
             peutBouger = false;
           }
           // Vérification des blocs gelés
           else if (etatBlocs[(temporaireTableauX[i] + addY), (temporaireTableauY[i] + addX)] == (int)TypeBloc.Gelé)
-          {
-            peutBouger = false;                       
+          {                    
+            peutBouger = false;
           }
         }
       }
       //Vérification, bouger la pièce du sens horaire
-      // KeyChar == 69 correspond à 'R' et KeyChar == 101 correspond à 'r'
-      else if (e.KeyChar == 69 || e.KeyChar == 101)
+      else if (sens == Deplacement.ROTATION_HORAIRE)
       {
-        int[] temporaireTableauY = new int[4];
         int[] temporaireTableauX = new int[4];
+        int[] temporaireTableauY = new int[4];
         for (int compteur = 0; compteur < blocActifX.Length; compteur++)
         {
           temporaireTableauY[compteur] = -blocActifY[compteur];
@@ -390,19 +589,19 @@ namespace TP3
         {
           // Vérification des côtés du tableau
           if ((temporaireTableauY[i] + addX) >= nbColonnesJeu || (temporaireTableauY[i] + addX) < 0)
-            {
-              peutBouger = false;
-            }
+          {
+            peutBouger = false;
+          }
           // Vérification haut et bas du tableau
-          else if ((temporaireTableauX[i] + addY) >= nbLignesJeu || (temporaireTableauX[i] + addY) <= 0)
-            {
-              peutBouger = false;
-            }
+          else if ((temporaireTableauX[i] + addY) >= nbLignesJeu || (temporaireTableauX[i] + addY) < 0)
+          {
+            peutBouger = false;
+          }
           // Vérification des blocs gelés
           else if (etatBlocs[(temporaireTableauX[i] + addY), (temporaireTableauY[i] + addX)] == (int)TypeBloc.Gelé)
-            {
-              peutBouger = false;
-            }
+          {
+            peutBouger = false;
+          }
         }
       }
 
@@ -438,11 +637,13 @@ namespace TP3
         }
       }
     }
+
     /// <summary>
     /// Fonction qui donne les couleurs à tous les types de blocs du tableau "etatBlocs"
     /// </summary>
     void FaireCouleursBlocs()
     {
+      PartieTermine();
       RemplirTableauEtatVide();
       // Donne les couleurs de la pièce qui à été choisie aléatoirement
       for (int compteur = 0; compteur < 4; compteur++)
@@ -457,7 +658,7 @@ namespace TP3
       {
         for (int compteur2 = 0; compteur2 < nbColonnesJeu; compteur2++)
         {
-          toutesImagesVisuelles[compteur,compteur2].BackColor = toutesLesCouleurs[etatBlocs[compteur, compteur2]];
+          toutesImagesVisuelles[compteur, compteur2].BackColor = toutesLesCouleurs[etatBlocs[compteur, compteur2]];
         }
       }
     }
@@ -535,8 +736,13 @@ namespace TP3
     {
       // Arrête le timer afin d'arrêter le jeu
       timerDescente.Stop();
+      tempsPartie = 0
       // Arrête la musique en cours si elle est activée
       mediaPlayer.controls.stop();
+      for (int compteur = 0; compteur < nbrBlocsDifferent.Length; compteur++)
+      {
+        nbrBlocsDifferent[compteur] = 0;    
+      }
       // Remets le tableau "etatBlocs" au complet en blocs vides
       for (int compteur = 0; compteur < nbLignesJeu; compteur++)
       {
@@ -564,7 +770,7 @@ namespace TP3
       // Si la pièce choisie aléatoirement est un carré
       if (pieceAleatoire == (int)TypeBloc.Carré)
       {
-       return tableauValeurBlocs = new int[4] { 0, 1, 0, 1 };
+        return tableauValeurBlocs = new int[4] { 0, 1, 0, 1 };
       }
       // Si la pièce choisie aléatoirement est une ligne horizontale
       else if (pieceAleatoire == (int)TypeBloc.Ligne)
@@ -652,7 +858,7 @@ namespace TP3
       {
         return tableauValeurBlocs = new int[4] { 1, 0, 1, 0 };
       }
-      // Sinon, initie une pièce vide
+      // Sinon, initialise une pièce vide
       else
       {
         return tableauValeurBlocs = new int[4] { 0, 0, 0, 0 };
@@ -677,13 +883,34 @@ namespace TP3
     /// <param name="e"></param>
     private void tetrisGameCore_KeyPress(object sender, KeyPressEventArgs e)
     {
-      MouvementJoueur(e);
+      Deplacement sens = Deplacement.RIEN;
+      if (e.KeyChar == 65 || e.KeyChar == 97)
+      {
+        sens = Deplacement.GAUCHE;
+      }
+      else if (e.KeyChar == 68 || e.KeyChar == 100)
+      {
+        sens = Deplacement.DROITE;
+      }
+      else if (e.KeyChar == 69 || e.KeyChar == 101)
+      {
+        sens = Deplacement.ROTATION_HORAIRE;
+      }
+      else if (e.KeyChar == 81 || e.KeyChar == 113)
+      {
+        sens = Deplacement.ROTATION_ANTIHORAIRE;
+      }
+      else if (e.KeyChar == 83 || e.KeyChar == 32 || e.KeyChar == 115)
+      {
+        sens = Deplacement.DESCENTE;
+      }
+      MouvementJoueur(sens);
     }
 
     /// <summary>
-    /// Fonction qui appelle toute les fonctions nécessaire au fonctionnement du jeu
+    /// Fonction qui appele toutes les fonctions nécessaires au fonctionnement du jeu
     /// </summary>
-    void FonctionsJeu ()
+    void FonctionsJeu()
     {
       // Initie le nombre de blocs gelés dans toutes les lignes à 0
       for (int i = 0; i < ligneÀRetirer.Length; i++)
@@ -696,6 +923,8 @@ namespace TP3
       addX = (nbColonnesJeu / 2);
       // Choisi une pièce aléatoire
       pieceAleatoire = PieceAleatoire();
+      nbrBlocsDifferent[pieceAleatoire-2]++;
+      nbrBlocsDifferent[8]++;
       // Assignent le bloc choisi au bonnes positions des tableaux "blocActif"
       blocActifY = AssignerPositionFormeY(pieceAleatoire);
       blocActifX = AssignerPositionFormeX(pieceAleatoire);
@@ -706,23 +935,23 @@ namespace TP3
     /// <summary>
     /// Fonction qui permet le mouvement de la pièce selon la touche que le joueur appuie
     /// </summary>
-    /// <param name="e"></param>
-    void MouvementJoueur(KeyPressEventArgs e)
+    /// <param name="sens">Enum qui représente le sens de déplacement du joueur</param>
+    void MouvementJoueur(Deplacement sens)
     {
       //<ADion>
 
       bool reponseBouger = true;
-      reponseBouger = BlocPeutBouger(e);
+      reponseBouger = BlocPeutBouger(sens);
       if (reponseBouger == true)
       {
         //Bouger la pièce à gauche
-        if (e.KeyChar == 65 || e.KeyChar == 97)
+        if (sens == Deplacement.GAUCHE)
         {
           addX--;
           FaireCouleursBlocs();
         }
         //Bouger la pièce à droite
-        else if (e.KeyChar == 68 || e.KeyChar == 100)
+        else if (sens == Deplacement.DROITE)
         {
           addX++;
           FaireCouleursBlocs();
@@ -732,32 +961,32 @@ namespace TP3
 
         //<alangevin>
         //Bouger la pièce du sens horaire
-        else if (e.KeyChar == 69 || e.KeyChar == 101)
+        else if (sens == Deplacement.ROTATION_HORAIRE)
         {
-          int[] temporaireTableauY = new int[4];
+          int[] temporaireTableau = new int[4];
           for (int compteur = 0; compteur < blocActifX.Length; compteur++)
           {
-            temporaireTableauY[compteur] = blocActifX[compteur];
+            temporaireTableau[compteur] = blocActifX[compteur];
           }
           for (int compteur = 0; compteur < blocActifX.Length; compteur++)
           {
             blocActifX[compteur] = -blocActifY[compteur];
-            blocActifY[compteur] = temporaireTableauY[compteur];
+            blocActifY[compteur] = temporaireTableau[compteur];
           }
           FaireCouleursBlocs();
         }
         //Bouger la pièce du sens anti-horaire
-        else if (e.KeyChar == 81 || e.KeyChar == 113)
+        else if (sens == Deplacement.ROTATION_ANTIHORAIRE)
         {
-          int[] temporaireTableauY = new int[4];
+          int[] temporaireTableau = new int[4];
           for (int compteur = 0; compteur < blocActifX.Length; compteur++)
           {
-            temporaireTableauY[compteur] = -blocActifX[compteur];
+            temporaireTableau[compteur] = -blocActifX[compteur];
           }
           for (int compteur = 0; compteur < blocActifX.Length; compteur++)
           {
             blocActifX[compteur] = blocActifY[compteur];
-            blocActifY[compteur] = temporaireTableauY[compteur];
+            blocActifY[compteur] = temporaireTableau[compteur];
           }
           FaireCouleursBlocs();
         }
@@ -767,7 +996,7 @@ namespace TP3
         //<ADion>
 
         // Bouger la pièce vers le bas
-        else if (e.KeyChar == 83 || e.KeyChar == 32 || e.KeyChar == 115)
+        else if (sens == Deplacement.DESCENTE)
         {
           addY++;
           FaireCouleursBlocs();
@@ -782,15 +1011,39 @@ namespace TP3
 
       }
     }
+
+    //<alangevin>
     /// <summary>
-    /// 
+    /// Fonction qui permet de vérifier si la partie est terminée
     /// </summary>
-    void VerifierSiPartieTermine ()
+    bool VerifierSiPartieTermine()
     {
-      pieceAleatoire = PieceAleatoire();
-      blocActifY = AssignerPositionFormeY(pieceAleatoire);
-      blocActifX = AssignerPositionFormeX(pieceAleatoire);
+      bool partieTermine = false;
+      for (int i = 0; i < blocActifY.Length-1; i++)
+      {
+        if (etatBlocs[(blocActifY[i] + addY), (blocActifX[i] + addX)] == (int)TypeBloc.Gelé)
+        {
+          partieTermine = true;
+        }
+      }
+      return partieTermine;
     }
+
+    /// <summary>
+    /// Fonction qui termine la partie
+    /// </summary>
+    void PartieTermine()
+    {
+      if (VerifierSiPartieTermine() == true)
+      {
+        timerDescente.Stop();
+        fin = new FinDePartie();
+        fin.TempsDeJeu(tempsPartie);
+        fin.SpecifierNbPiece(nbrBlocsDifferent);
+        fin.ShowDialog();
+      }
+    }
+    //</alangevin>
 
     //<ADion>
 
@@ -915,6 +1168,97 @@ namespace TP3
       nbLignesADécaler = 0;
     }
 
+    /// <summary>
+    /// Permet d'associer la valeur du numericUpDown à la trackBar correspondante afin d'afficher
+    /// les mêmes valeurs sur les deux (Ligne dans ce cas-ci)
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void numLignesJeu_ValueChanged(object sender, EventArgs e)
+    {
+      trackBarLignesJeu.Value = (int)numLignesJeu.Value;
+    }
+
+    /// <summary>
+    /// Permet d'associer la valeur du numericUpDown à la trackBar correspondante afin d'afficher
+    /// les mêmes valeurs sur les deux (Colonnne dans ce cas-ci)
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void numColonnesJeu_ValueChanged(object sender, EventArgs e)
+    {
+      trackBarColonnesJeu.Value = (int)numColonnesJeu.Value;
+    }
+
+    /// <summary>
+    /// Permet d'associer la valeur de la trackBar au numericUpDown correspondant afin d'afficher
+    /// les mêmes valeurs sur les deux (Colonne dans ce cas-ci)
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void trackBarColonnesJeu_ValueChanged(object sender, EventArgs e)
+    {
+      numColonnesJeu.Value = trackBarColonnesJeu.Value;
+    }
+
+    /// <summary>
+    /// Permet d'associer la valeur de la trackBar au numericUpDown correspondant afin d'afficher
+    /// les mêmes valeurs sur les deux (Ligne dans ce cas-ci)
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void trackBarLignesJeu_ValueChanged(object sender, EventArgs e)
+    {
+      numLignesJeu.Value = trackBarLignesJeu.Value;
+    }
+
+    /// <summary>
+    /// Permet de prendre en compte les nouvelles données chosies lorsque l'on clique sur le bouton
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void btnOk_Click(object sender, EventArgs e)
+    {
+      // Met fin à la partie et réinitialise tout
+      RefairePartie();
+      // Donne les nouvelles valeurs à nbLignesJeu et nbColonnesJeu
+      nbLignesJeu = trackBarLignesJeu.Value;
+      nbColonnesJeu = trackBarColonnesJeu.Value;
+      // Refait le tableau de jeu
+      InitialiserSurfaceDeJeu(nbLignesJeu, nbColonnesJeu);
+    }
+
+    /// <summary>
+    /// Permet de confirmer si la musique est active ou non
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void checkBoxActivationMusique_CheckedChanged(object sender, EventArgs e)
+    {
+      // Si la case est cochée, la musique est active
+      if (checkBoxActivationMusique.Checked == true)
+      {
+        musiqueActive = true;
+      }
+      // Sinon, inactive
+      else 
+      {
+        musiqueActive = false;
+      }
+    }
+
+    //</ADion>
+
+    /// <summary>
+    /// Fonction qui compte le temps joué 
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void tempsDeJeu_Tick(object sender, EventArgs e)
+    {
+      tempsPartie++;
+    }
+    
     /// <summary>
     /// Permet d'associer la valeur du numericUpDown à la trackBar correspondante afin d'afficher
     /// les mêmes valeurs sur les deux (Ligne dans ce cas-ci)
